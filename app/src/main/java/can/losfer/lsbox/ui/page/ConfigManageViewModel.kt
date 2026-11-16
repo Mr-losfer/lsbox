@@ -442,6 +442,24 @@ class ConfigManageViewModel(
         return existed
     }
 
+    /**
+     * 市场页点击站点：添加订阅并立即设为当前订阅。
+     * @return true 表示切换成功
+     */
+    fun addFromMarket(vod: Boolean, name: String, url: String): Boolean {
+        if (url.isEmpty()) return false
+        val mode = if (vod) SubscribeMode.Vod else SubscribeMode.Live
+        val items = saveSubscribe(mode, name, url)
+        if (vod) _vodItems.value = items else _liveItems.value = items
+        val item = SubscribeSource(name.ifEmpty { url }, url)
+        if (item.url in _disabledUrls.value) {
+            BootGuard.enableSource(item.url)
+            _disabledUrls.value = _disabledUrls.value - item.url
+        }
+        if (vod) switchToVod(item) else switchToLive(item)
+        return true
+    }
+
     fun commitEdit(vod: Boolean, target: SubscribeSource, name: String, url: String) {
         if (url.isEmpty()) return
         val mode = if (vod) SubscribeMode.Vod else SubscribeMode.Live
