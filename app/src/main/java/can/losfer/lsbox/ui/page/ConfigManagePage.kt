@@ -98,6 +98,7 @@ fun ConfigManageScreen(onNavigateBack: () -> Unit) {
     var mode by rememberSaveable { mutableStateOf(ConfigMode.Vod) }
     var addDialogOpen by remember { mutableStateOf(false) }
     var repoSheetOpen by remember { mutableStateOf(false) }
+    var marketOpen by remember { mutableStateOf(false) }
     val vodItems by vm.vodItems.collectAsState()
     val liveItems by vm.liveItems.collectAsState()
     val activeUrl by vm.activeUrl.collectAsState()
@@ -210,6 +211,11 @@ fun ConfigManageScreen(onNavigateBack: () -> Unit) {
                                     onClick = { repoSheetOpen = true },
                                 )
                             }
+                            TopBarActionBox(
+                                iconRes = R.drawable.ic_market,
+                                contentDescription = stringResource(R.string.market_entry),
+                                onClick = { marketOpen = true },
+                            )
                             TopBarActionBox(
                                 iconRes = R.drawable.ic_subscribe_add,
                                 contentDescription = if (isVod) {
@@ -443,6 +449,28 @@ fun ConfigManageScreen(onNavigateBack: () -> Unit) {
                 )
                 vm.requestSwitch(SubscribeSource(name, url), isVod)
                 if (vm.pendingSwitch.value != null) repoSheetOpen = false
+            },
+        )
+    }
+
+    if (marketOpen) {
+        val addedText = stringResource(R.string.market_added)
+        MarketPage(
+            onNavigateBack = { marketOpen = false },
+            onPick = { site ->
+                val ok = vm.addFromMarket(
+                    vod = site.type == can.losfer.lsbox.market.MarketSiteType.Vod,
+                    name = site.name,
+                    url = site.url,
+                )
+                if (ok) {
+                    Toast.makeText(
+                        context,
+                        addedText.replace("%1\$s", site.name),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                marketOpen = false
             },
         )
     }
