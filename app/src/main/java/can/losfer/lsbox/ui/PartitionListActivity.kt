@@ -5,6 +5,7 @@
 
 package can.losfer.lsbox.ui
 
+import can.losfer.lsbox.ui.components.mirrorInRtl
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -227,7 +228,7 @@ private fun PartitionListScreen(mode: String, videosJson: String?, onBack: () ->
             )
         },
         navigationIcon = {
-            BarActionBox(R.drawable.ic_arrow_left, stringResource(R.string.common_back)) { onBack() }
+            BarActionBox(R.drawable.ic_arrow_left, stringResource(R.string.common_back), mirrorInRtl = true) { onBack() }
         },
         actions = {
             if (mode == PartitionListActivity.MODE_PARTITION) {
@@ -311,6 +312,7 @@ private fun BarActionBox(
     iconRes: Int,
     contentDescription: String,
     tint: Color = MaterialTheme.colorScheme.onSurface,
+    mirrorInRtl: Boolean = false,
     onClick: () -> Unit,
 ) {
     Box(
@@ -324,7 +326,9 @@ private fun BarActionBox(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
             tint = tint,
-            modifier = Modifier.size(22.dp),
+            modifier = Modifier
+                .size(22.dp)
+                .then(if (mirrorInRtl) Modifier.mirrorInRtl() else Modifier),
         )
     }
 }
