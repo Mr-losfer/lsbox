@@ -1,0 +1,11 @@
+{
+  "lives": [
+    {
+      "name": "LSBox نەمۇنە تېلېۋىزىيە",
+      "type": 0,
+      "url": "https://raw.githubusercontent.com/Mr-losfer/lsbox/main/market/config/live-default.m3u",
+      "playerType": 1,
+      "epg": ""
+    }
+  ]
+}
