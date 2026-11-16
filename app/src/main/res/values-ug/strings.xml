@@ -616,4 +616,16 @@
     <string name="settings_about_upstream">ئەسلى ئاپتورنىڭ تۈرى ئاساسىدا قايتا ئېچىلغان، ئەسلى ئاپتورنىڭ باياناتى ۋە مەنبەسى ساقلانغان</string>
     <string name="settings_language_ug">ئۇيغۇرچە</string>
     <string name="settings_language_kk">قازاقچە (شىنجاڭ)</string>
+
+    <string name="market_title">قانال بازىرى</string>
+    <string name="market_loading">قانال بازىرى يۈكلىنىۋاتىدۇ…</string>
+    <string name="market_load_failed">يۈكلىش مەغلۇب بولدى، تورنى تەكشۈرۈپ قايتا سىناڭ</string>
+    <string name="market_retry">قايتا سىناش</string>
+    <string name="market_group_vod">تاللاش قاناللىرى</string>
+    <string name="market_group_live">تېلېۋىزىيە قاناللىرى</string>
+    <string name="market_type_vod">تاللاش</string>
+    <string name="market_type_live">تېلېۋىزىيە</string>
+    <string name="market_added">قوشۇلدى ۋە ئالماشتۇرۇلدى: %1$s</string>
+    <string name="market_entry">قانال بازىرى</string>
+    <string name="market_entry_subtitle">تەۋسىيە قىلىنغان قاناللارنى كۆرۈپ بىر بېسىمدا قوشۇڭ</string>
 </resources>
