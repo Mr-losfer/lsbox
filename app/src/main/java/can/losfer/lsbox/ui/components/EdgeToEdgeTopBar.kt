@@ -171,6 +171,8 @@ fun TopBarActionBox(
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colorScheme.onSurface,
     fallbackColor: Color = MaterialTheme.colorScheme.surfaceBright,
+    /** 方向性图标（如返回箭头）在 RTL 下自动镜像 */
+    mirrorInRtl: Boolean = false,
 ) {
     Box(
         modifier = modifier
@@ -183,7 +185,9 @@ fun TopBarActionBox(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
             tint = tint,
-            modifier = Modifier.size(22.dp),
+            modifier = Modifier
+                .size(22.dp)
+                .then(if (mirrorInRtl) Modifier.mirrorInRtl() else Modifier),
         )
     }
 }
