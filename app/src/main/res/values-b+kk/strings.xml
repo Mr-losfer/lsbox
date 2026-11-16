@@ -628,4 +628,19 @@
     <string name="market_added">قوسىلدى جانە اۋىستىرىلدى: %1$s</string>
     <string name="market_entry">ارنا بازارى</string>
     <string name="market_entry_subtitle">ۇسىنىلعان ارنالاردى كورىپ بىر باسىپ قوسىڭىز</string>
+    <string name="episode_copy_action">بөлім көшіру</string>
+    <string name="episode_pick_title">بөлімдерді таңдаңыз</string>
+    <string name="episode_pick_count">таңдалғаны %1$d / %2$d</string>
+    <string name="episode_pick_select_all">барлығын таңдау</string>
+    <string name="episode_pick_clear_all">барлығын болдырмау</string>
+    <string name="episode_pick_cancel">болдырмау</string>
+    <string name="episode_pick_confirm">растау</string>
+    <string name="episode_export_title">бөлім сілтемесін шығару</string>
+    <string name="episode_export_count">барлығы %1$d</string>
+    <string name="episode_export_template">өрнек</string>
+    <string name="episode_export_hint">{n} {name} {url} {index} қолдайды</string>
+    <string name="episode_export_output">нәтиже</string>
+    <string name="episode_export_copy">көшіру</string>
+    <string name="episode_export_close">жабу</string>
+    <string name="episode_export_copied">көшірілді</string>
 </resources>
