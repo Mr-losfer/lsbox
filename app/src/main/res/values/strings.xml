@@ -655,4 +655,16 @@
     <string name="settings_about_upstream">基于原作者项目二次开发，保留原作者声明与出处</string>
     <string name="settings_language_ug">ئۇيغۇرچە</string>
     <string name="settings_language_kk">قازاقچە (شىنجاڭ)</string>
+
+    <string name="market_title">订阅市场</string>
+    <string name="market_loading">正在加载订阅市场…</string>
+    <string name="market_load_failed">加载失败，请检查网络后重试</string>
+    <string name="market_retry">重试</string>
+    <string name="market_group_vod">点播站点</string>
+    <string name="market_group_live">直播站点</string>
+    <string name="market_type_vod">点播</string>
+    <string name="market_type_live">直播</string>
+    <string name="market_added">已添加并切换：%1$s</string>
+    <string name="market_entry">订阅市场</string>
+    <string name="market_entry_subtitle">浏览并一键添加推荐站点</string>
 </resources>
