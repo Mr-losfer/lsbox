@@ -1,0 +1,40 @@
+{
+  "sites": [
+    {
+      "key": "lsbox_demo_vod",
+      "name": "LSBox نەمۇنە قانالى",
+      "type": 3,
+      "api": "csp_LsBoxDemo",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "ext": {
+        "site": "https://www.example.com",
+        "note": "بۇ نەمۇنە قانال، ئەمەلىي تور ئادرېسىغا ئالماشتۇرۇڭ",
+        "type": "1"
+      }
+    }
+  ],
+  "parses": [
+    {
+      "name": "يوللانغۇچ",
+      "type": 1,
+      "url": "https://jx.player.com/jx.php?url="
+    }
+  ],
+  "flags": [
+    "youku",
+    "qq",
+    "iqiyi",
+    "qsv",
+    "letv",
+    "sohu",
+    "tudou",
+    "pptv",
+    "mgtv",
+    "wasu",
+    "bilibili"
+  ],
+  "rules": [],
+  "ads": []
+}
