@@ -4,14 +4,14 @@
   "name": "مەنبە بازىرى",
   "sites": [
     {
-      "name": "سۈكۈت",
+      "name": "كىنو فىلىم 1",
       "type": "vod",
       "url": "http://play.qaksez.cn/aslima/New_version_2.0.1/kino.index.php",
       "description": "ئاساسىي كىنو-تېلېۋىزىيە قانالى",
       "recommend": true
     },
     {
-      "name": "سۈكۈت",
+      "name": "بىۋاستە تارقىتىش 1",
       "type": "live",
       "url": "https://gh-proxy.com/https://raw.githubusercontent.com/Mr-losfer/lsbox/main/market/config/live-default.json",
       "description": "تېلېۋىزىيە ۋە رادىئو قاناللىرى",
