@@ -164,6 +164,7 @@ fun ConfigManageScreen(onNavigateBack: () -> Unit) {
                 R.drawable.ic_arrow_left,
                 stringResource(R.string.common_back),
                 onClick = { if (manageMode) vm.exitManageMode() else onNavigateBack() },
+                mirrorInRtl = true,
             )
         },
         actions = {
