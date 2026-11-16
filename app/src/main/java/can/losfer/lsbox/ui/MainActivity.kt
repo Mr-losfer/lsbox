@@ -66,6 +66,7 @@ class MainActivity : BaseActivity() {
                 // 自动检测更新只在进入主界面后触发一次；结果驱动 state，绝不在组合期间修改父级状态
                 LaunchedEffect(showWelcome) {
                     if (showWelcome) return@LaunchedEffect
+                    can.losfer.lsbox.market.DefaultSubscriptionSeeder.seedIfNeeded()
                     checkUpdate(
                         scope = this,
                         onAvailable = { updateRelease = it },
