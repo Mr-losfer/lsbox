@@ -1,17 +1,17 @@
 {
   "version": 2,
   "updated": "2026-11-16",
-  "name": "LSBox قانال بازىرى",
+  "name": "مەنبە بازىرى",
   "sites": [
     {
-      "name": "LSBox ئاساسىي قانال",
+      "name": "سۈكۈت",
       "type": "vod",
       "url": "http://play.qaksez.cn/aslima/New_version_2.0.1/kino.index.php",
       "description": "ئاساسىي كىنو-تېلېۋىزىيە قانالى",
       "recommend": true
     },
     {
-      "name": "LSBox تېلېۋىزىيە قانال",
+      "name": "سۈكۈت",
       "type": "live",
       "url": "https://gh-proxy.com/https://raw.githubusercontent.com/Mr-losfer/lsbox/main/market/config/live-default.json",
       "description": "تېلېۋىزىيە ۋە رادىئو قاناللىرى",
