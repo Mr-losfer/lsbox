@@ -342,7 +342,7 @@ fun SettingsPage(
                     )
                 }
 
-                SettingsCard(SettingsCardPosition.LAST) {
+                SettingsCard(SettingsCardPosition.MIDDLE) {
                     SettingsRow(
                         title = stringResource(R.string.settings_about),
                         subtitle = stringResource(R.string.settings_about_subtitle),
