@@ -616,4 +616,16 @@
     <string name="settings_about_upstream">باستابى اۆتوردىڭ جوباسى نەگىزىندە قايتا اشىلعان، باستابى اۆتوردىڭ ماعلۇماتى مەن مەنبەسى ساقتالعان</string>
     <string name="settings_language_ug">ۇيغىرشا</string>
     <string name="settings_language_kk">قازاقشا (شىنجاڭ)</string>
+
+    <string name="market_title">ارنا بازارى</string>
+    <string name="market_loading">ارنا بازارى جۇكتەلۋدە…</string>
+    <string name="market_load_failed">جۇكتەۋ ساتسىز بولدى، جەلىنى تەكسەرىپ قايتا كۆرىڭىز</string>
+    <string name="market_retry">قايتا كۆرۋ</string>
+    <string name="market_group_vod">تالداۋ ارنالارى</string>
+    <string name="market_group_live">تەلەۆيزيا ارنالارى</string>
+    <string name="market_type_vod">تالداۋ</string>
+    <string name="market_type_live">تەلەۆيزيا</string>
+    <string name="market_added">قوسىلدى جانە اۋىستىرىلدى: %1$s</string>
+    <string name="market_entry">ارنا بازارى</string>
+    <string name="market_entry_subtitle">ۇسىنىلعان ارنالاردى كورىپ بىر باسىپ قوسىڭىز</string>
 </resources>
