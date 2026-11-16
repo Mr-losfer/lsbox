@@ -628,4 +628,19 @@
     <string name="market_added">قوشۇلدى ۋە ئالماشتۇرۇلدى: %1$s</string>
     <string name="market_entry">قانال بازىرى</string>
     <string name="market_entry_subtitle">تەۋسىيە قىلىنغان قاناللارنى كۆرۈپ بىر بېسىمدا قوشۇڭ</string>
+    <string name="episode_copy_action">قىسىم كۆچۈرۈش</string>
+    <string name="episode_pick_title">قىسىملارنى تاللاڭ</string>
+    <string name="episode_pick_count">تاللانغىنى %1$d / %2$d</string>
+    <string name="episode_pick_select_all">ھەممىنى تاللا</string>
+    <string name="episode_pick_clear_all">ھەممىنى بىكار قىل</string>
+    <string name="episode_pick_cancel">بىكار قىلىش</string>
+    <string name="episode_pick_confirm">جەزملەشتۈرۈش</string>
+    <string name="episode_export_title">قىسىم ئۇلانمىسىنى چىقىرىش</string>
+    <string name="episode_export_count">جەمئىي %1$d</string>
+    <string name="episode_export_template">ئىپادە</string>
+    <string name="episode_export_hint">{n} {name} {url} {index} نى قوللايدۇ</string>
+    <string name="episode_export_output">نەتىجە</string>
+    <string name="episode_export_copy">كۆچۈرۈش</string>
+    <string name="episode_export_close">تاقاش</string>
+    <string name="episode_export_copied">كۆچۈرۈلدى</string>
 </resources>
