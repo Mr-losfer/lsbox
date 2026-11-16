@@ -1,20 +1,20 @@
 {
-  "version": 1,
+  "version": 2,
   "updated": "2026-11-16",
   "name": "LSBox قانال بازىرى",
   "sites": [
     {
-      "name": "LSBox ئومۇمىي قانال",
+      "name": "LSBox ئاساسىي قانال",
       "type": "vod",
-      "url": "https://gh-proxy.com/https://raw.githubusercontent.com/Mr-losfer/lsbox/main/market/config/vod-default.json",
-      "description": "ئومۇمىي ۋىدېئو قانالى، كۆپ مەنبەلىك",
+      "url": "http://play.qaksez.cn/aslima/New_version_2.0.1/kino.index.php",
+      "description": "ئاساسىي كىنو-تېلېۋىزىيە قانالى",
       "recommend": true
     },
     {
-      "name": "LSBox لايىھە قانال",
+      "name": "LSBox تېلېۋىزىيە قانال",
       "type": "live",
       "url": "https://gh-proxy.com/https://raw.githubusercontent.com/Mr-losfer/lsbox/main/market/config/live-default.json",
-      "description": "گۈزەل تېلېۋىزىيە ۋە رادىئو قاناللىرى",
+      "description": "تېلېۋىزىيە ۋە رادىئو قاناللىرى",
       "recommend": true
     }
   ]
