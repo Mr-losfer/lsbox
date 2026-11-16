@@ -35,6 +35,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -80,17 +85,17 @@ private data class LanguageOption(
     val language: AppLanguage,
     val nativeName: String,
     val subName: String,
-    val emoji: String,
+    val icon: ImageVector,
 )
 
 private val languageOptions = listOf(
-    LanguageOption(AppLanguage.Uyghur, "ئۇيغۇرچە", "Uyghur", "🌙"),
-    LanguageOption(AppLanguage.Kazakh, "قازاقشا", "Kazakh (Xinjiang)", "🏔"),
-    LanguageOption(AppLanguage.SimplifiedChinese, "简体中文", "Chinese (Simplified)", "🏮"),
-    LanguageOption(AppLanguage.English, "English", "English", "🌐"),
-    LanguageOption(AppLanguage.TraditionalTW, "繁體(台灣)", "Chinese (Taiwan)", "🏮"),
-    LanguageOption(AppLanguage.TraditionalHK, "繁體(香港)", "Chinese (Hong Kong)", "🏮"),
-    LanguageOption(AppLanguage.System, "سېستېما تىلى", "System default", "⚙"),
+    LanguageOption(AppLanguage.Uyghur, "ئۇيغۇرچە", "Uyghur", Icons.Filled.Translate),
+    LanguageOption(AppLanguage.Kazakh, "قازاقشا", "Kazakh (Xinjiang)", Icons.Filled.Language),
+    LanguageOption(AppLanguage.SimplifiedChinese, "简体中文", "Chinese (Simplified)", Icons.Filled.Public),
+    LanguageOption(AppLanguage.English, "English", "English", Icons.Filled.Language),
+    LanguageOption(AppLanguage.TraditionalTW, "繁體(台灣)", "Chinese (Taiwan)", Icons.Filled.Public),
+    LanguageOption(AppLanguage.TraditionalHK, "繁體(香港)", "Chinese (Hong Kong)", Icons.Filled.Public),
+    LanguageOption(AppLanguage.System, "سېستېما تىلى", "System default", Icons.Filled.Settings),
 )
 
 /**
@@ -269,7 +274,23 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                             .padding(horizontal = 18.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(option.emoji, fontSize = 24.sp)
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (isSelected) scheme.primary
+                                    else scheme.primaryContainer
+                                ),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                imageVector = option.icon,
+                                contentDescription = null,
+                                tint = if (isSelected) scheme.onPrimary else scheme.onPrimaryContainer,
+                                modifier = Modifier.size(24.dp),
+                            )
+                        }
                         Spacer(Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(

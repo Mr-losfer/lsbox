@@ -28,6 +28,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -67,6 +68,7 @@ import can.losfer.lsbox.ui.settings.UiSettingsState
 import can.losfer.lsbox.util.DefaultConfig
 import can.losfer.lsbox.util.UyghurFontManager
 import can.losfer.lsbox.util.UyghurFont
+import can.losfer.lsbox.update.ReleaseInfo
 import can.losfer.lsbox.update.UpdateManager
 import can.losfer.lsbox.update.UpdateResult
 import can.losfer.lsbox.util.HistoryHelper
@@ -163,6 +165,7 @@ fun SettingsPage(
     var aboutSheet by remember { mutableStateOf(false) }
     var fontSheet by remember { mutableStateOf(false) }
     var updateMessage by remember { mutableStateOf<String?>(null) }
+    var updateRelease by remember { mutableStateOf<ReleaseInfo?>(null) }
     val updateScope = rememberCoroutineScope()
 
     val listState = rememberScrollState()
@@ -329,14 +332,12 @@ fun SettingsPage(
                         subtitle = stringResource(R.string.update_checking),
                         iconRes = R.drawable.ic_settings_api,
                         onClick = {
-                            updateScope.launch {
-                                val r = UpdateManager.check()
-                                updateMessage = when (r) {
-                                    is UpdateResult.Available -> r.release.versionName
-                                    is UpdateResult.UpToDate -> "uptodate"
-                                    is UpdateResult.Error -> "error"
-                                }
-                            }
+                            checkUpdate(
+                                scope = updateScope,
+                                onAvailable = { updateRelease = it },
+                                onMessage = { updateMessage = it },
+                                skipIfDismissed = false, // 手动检测：即使之前跳过过也再次提示
+                            )
                         },
                     )
                 }
@@ -373,14 +374,24 @@ fun SettingsPage(
         )
     }
 
-    updateMessage?.let { msg ->
-        val text = when (msg) {
+    // toast 作为副作用放入 LaunchedEffect，避免在组合期间写状态导致重组崩溃
+    val updateToast = updateMessage?.let { msg ->
+        when (msg) {
             "uptodate" -> stringResource(R.string.update_no_new)
             "error" -> stringResource(R.string.update_failed)
-            else -> stringResource(R.string.update_title, msg)
+            else -> null
         }
-        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
-        updateMessage = null
+    }
+    if (updateToast != null) {
+        LaunchedEffect(updateToast) {
+            Toast.makeText(context, updateToast, Toast.LENGTH_LONG).show()
+            updateMessage = null
+        }
+    }
+
+    // 检测到新版本：从底部弹出更新弹窗
+    updateRelease?.let { rel ->
+        UpdateSheet(release = rel, onDismiss = { updateRelease = null })
     }
 
 }
