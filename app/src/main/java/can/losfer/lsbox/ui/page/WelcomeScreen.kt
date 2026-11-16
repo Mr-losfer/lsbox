@@ -93,8 +93,6 @@ private val languageOptions = listOf(
     LanguageOption(AppLanguage.Kazakh, "قازاقشا", "Kazakh (Xinjiang)", Icons.Filled.Language),
     LanguageOption(AppLanguage.SimplifiedChinese, "简体中文", "Chinese (Simplified)", Icons.Filled.Public),
     LanguageOption(AppLanguage.English, "English", "English", Icons.Filled.Language),
-    LanguageOption(AppLanguage.TraditionalTW, "繁體(台灣)", "Chinese (Taiwan)", Icons.Filled.Public),
-    LanguageOption(AppLanguage.TraditionalHK, "繁體(香港)", "Chinese (Hong Kong)", Icons.Filled.Public),
     LanguageOption(AppLanguage.System, "سېستېما تىلى", "System default", Icons.Filled.Settings),
 )
 

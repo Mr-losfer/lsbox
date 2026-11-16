@@ -30,8 +30,6 @@ object LanguageManager {
         AppLanguage.System,
         AppLanguage.SimplifiedChinese,
         AppLanguage.English,
-        AppLanguage.TraditionalTW,
-        AppLanguage.TraditionalHK,
         AppLanguage.Uyghur,
         AppLanguage.Kazakh,
     )
