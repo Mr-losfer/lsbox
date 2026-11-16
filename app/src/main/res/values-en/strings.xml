@@ -655,4 +655,16 @@
     <string name="settings_about_upstream">Based on the original author\'s project, original credits preserved</string>
     <string name="settings_language_ug">Uyghur</string>
     <string name="settings_language_kk">Kazakh (Xinjiang)</string>
+
+    <string name="market_title">Source Market</string>
+    <string name="market_loading">Loading source market…</string>
+    <string name="market_load_failed">Failed to load. Check your network and retry.</string>
+    <string name="market_retry">Retry</string>
+    <string name="market_group_vod">On-demand Sites</string>
+    <string name="market_group_live">Live Sites</string>
+    <string name="market_type_vod">On-demand</string>
+    <string name="market_type_live">Live</string>
+    <string name="market_added">Added and switched: %1$s</string>
+    <string name="market_entry">Source Market</string>
+    <string name="market_entry_subtitle">Browse and add recommended sources in one tap</string>
 </resources>
