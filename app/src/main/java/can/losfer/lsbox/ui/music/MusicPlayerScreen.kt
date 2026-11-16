@@ -293,7 +293,12 @@ private fun MusicTopBar(sourceName: String, onBack: () -> Unit) {
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        TopBarActionBox(R.drawable.ic_arrow_left, stringResource(R.string.common_back), onClick = onBack)
+        TopBarActionBox(
+            R.drawable.ic_arrow_left,
+            stringResource(R.string.common_back),
+            onClick = onBack,
+            mirrorInRtl = true,
+        )
         if (sourceName.isNotEmpty()) {
             Spacer(Modifier.weight(1f))
             MusicSourcePill(sourceName)
