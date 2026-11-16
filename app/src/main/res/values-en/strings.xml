@@ -667,4 +667,19 @@
     <string name="market_added">Added and switched: %1$s</string>
     <string name="market_entry">Source Market</string>
     <string name="market_entry_subtitle">Browse and add recommended sources in one tap</string>
+    <string name="episode_copy_action">Copy episodes</string>
+    <string name="episode_pick_title">Select episodes</string>
+    <string name="episode_pick_count">Selected %1$d / %2$d</string>
+    <string name="episode_pick_select_all">Select all</string>
+    <string name="episode_pick_clear_all">Clear all</string>
+    <string name="episode_pick_cancel">Cancel</string>
+    <string name="episode_pick_confirm">Confirm</string>
+    <string name="episode_export_title">Export episode links</string>
+    <string name="episode_export_count">%1$d items</string>
+    <string name="episode_export_template">Expression</string>
+    <string name="episode_export_hint">Supports {n} {name} {url} {index}</string>
+    <string name="episode_export_output">Output</string>
+    <string name="episode_export_copy">Copy</string>
+    <string name="episode_export_close">Close</string>
+    <string name="episode_export_copied">Copied to clipboard</string>
 </resources>
