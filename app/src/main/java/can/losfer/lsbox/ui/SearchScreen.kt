@@ -2,6 +2,7 @@
 
 package can.losfer.lsbox.ui
 
+import can.losfer.lsbox.ui.components.mirrorInRtl
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -145,7 +146,9 @@ fun SearchScreen(vm: SearchViewModel = rememberSearchViewModel()) {
                     painter = painterResource(R.drawable.ic_arrow_left),
                     contentDescription = stringResource(R.string.common_back),
                     tint = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.size(22.dp),
+                    modifier = Modifier
+                        .size(22.dp)
+                        .mirrorInRtl(),
                 )
             }
         },
