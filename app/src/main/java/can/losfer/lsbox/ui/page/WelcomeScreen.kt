@@ -53,7 +53,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -64,7 +65,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import can.losfer.lsbox.R
 import can.losfer.lsbox.ui.components.SettingsCardPosition
-import can.losfer.lsbox.ui.theme.cardContainer
 import can.losfer.lsbox.util.AppLanguage
 import can.losfer.lsbox.util.LanguageManager
 import kotlinx.coroutines.delay
@@ -117,7 +117,9 @@ private fun positionOf(index: Int, size: Int): SettingsCardPosition = when {
 
 /**
  * 首启语言引导页 —— 顶部 iPhone Hello 风格欢迎区 + 底部 Material 3 分组卡片语言列表。
- * 语言列表与"我的"页面一致：首项上圆角、末项下圆角、中间纵向拼接。
+ *
+ * 视觉与主界面保持同一套主题：背景用纯 surface，LOGO 单色化跟随主题色，
+ * 语言卡片底色使用主题容器色。
  */
 @Composable
 fun WelcomeScreen(onFinished: () -> Unit) {
@@ -134,7 +136,7 @@ fun WelcomeScreen(onFinished: () -> Unit) {
 
     val transition = rememberInfiniteTransition(label = "welcome-glow")
     val glow by transition.animateFloat(
-        initialValue = 0.96f,
+        initialValue = 0.97f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(1800, easing = LinearEasing), RepeatMode.Reverse),
         label = "glow",
@@ -149,19 +151,11 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                 .statusBarsPadding()
                 .navigationBarsPadding(),
         ) {
-            // ===== 顶部 iPhone 风格欢迎区 =====
+            // ===== 顶部 iPhone 风格欢迎区（与主题同底色，无彩色块）=====
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.44f)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                scheme.primaryContainer.copy(alpha = 0.5f),
-                                scheme.surface,
-                            )
-                        )
-                    ),
+                    .weight(0.44f),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(
@@ -173,15 +167,17 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                     Box(
                         modifier = Modifier
                             .size(104.dp)
-                            .clip(RoundedCornerShape(32.dp))
-                            .background(scheme.surfaceBright)
+                            .clip(RoundedCornerShape(30.dp))
+                            .background(scheme.surfaceContainerHigh)
                             .graphicsLayer { scaleX = glow; scaleY = glow },
                         contentAlignment = Alignment.Center,
                     ) {
+                        // 单色 LOGO：跟随主题主色，不再显示彩色原图
                         Image(
                             painter = painterResource(R.drawable.ic_app_logo),
                             contentDescription = null,
-                            modifier = Modifier.size(88.dp),
+                            colorFilter = ColorFilter.tint(scheme.primary, BlendMode.SrcIn),
+                            modifier = Modifier.size(82.dp),
                         )
                     }
 
@@ -193,7 +189,7 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                             fontWeight = FontWeight.Bold,
                             fontSize = 38.sp,
                         ),
-                        color = scheme.primary,
+                        color = scheme.onSurface,
                     )
 
                     Spacer(Modifier.height(8.dp))
@@ -218,7 +214,7 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                                     fontWeight = FontWeight.Light,
                                     fontSize = 28.sp,
                                 ),
-                                color = scheme.onSurface,
+                                color = scheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
                             )
                         }
@@ -265,7 +261,7 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                 Spacer(Modifier.height(14.dp))
             }
 
-            // ===== 底部语言列表（分组卡片：上下圆角、中间拼接）=====
+            // ===== 底部语言列表（分组卡片：上下圆角、中间拼接、主题色底）=====
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -282,7 +278,11 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                             .fillMaxWidth()
                             .clip(shape)
                             .background(
-                                if (isSelected) scheme.primaryContainer else scheme.cardContainer
+                                if (isSelected) {
+                                    scheme.primary
+                                } else {
+                                    scheme.primaryContainer.copy(alpha = 0.55f)
+                                }
                             )
                             .clickable {
                                 selected = index
@@ -298,14 +298,18 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                                 .size(42.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (isSelected) scheme.primary else scheme.primaryContainer
+                                    if (isSelected) {
+                                        scheme.onPrimary.copy(alpha = 0.20f)
+                                    } else {
+                                        scheme.primary.copy(alpha = 0.16f)
+                                    }
                                 ),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 imageVector = option.icon,
                                 contentDescription = null,
-                                tint = if (isSelected) scheme.onPrimary else scheme.onPrimaryContainer,
+                                tint = if (isSelected) scheme.onPrimary else scheme.primary,
                                 modifier = Modifier.size(22.dp),
                             )
                         }
@@ -316,21 +320,23 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                                 ),
-                                color = if (isSelected) scheme.onPrimaryContainer else scheme.onSurface,
+                                color = if (isSelected) scheme.onPrimary else scheme.onPrimaryContainer,
                             )
                             Text(
                                 text = option.subName,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (isSelected)
-                                    scheme.onPrimaryContainer.copy(alpha = 0.75f)
-                                else scheme.onSurfaceVariant,
+                                color = if (isSelected) {
+                                    scheme.onPrimary.copy(alpha = 0.82f)
+                                } else {
+                                    scheme.onPrimaryContainer.copy(alpha = 0.72f)
+                                },
                             )
                         }
                         if (isSelected) {
                             Icon(
                                 imageVector = Icons.Filled.Check,
                                 contentDescription = null,
-                                tint = scheme.onPrimaryContainer,
+                                tint = scheme.onPrimary,
                                 modifier = Modifier.size(22.dp),
                             )
                         }
