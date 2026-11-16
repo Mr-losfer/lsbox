@@ -66,7 +66,12 @@ fun PreferenceSettingsScreen(onNavigateBack: () -> Unit) {
             )
         },
         navigationIcon = {
-            TopBarActionBox(R.drawable.ic_arrow_left, stringResource(R.string.common_back), onClick = onNavigateBack)
+            TopBarActionBox(
+                R.drawable.ic_arrow_left,
+                stringResource(R.string.common_back),
+                onClick = onNavigateBack,
+                mirrorInRtl = true,
+            )
         },
     ) { topPad, _ ->
         Column(
