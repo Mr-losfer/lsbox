@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "updated": "2026-11-16",
+  "name": "LSBox قانال بازىرى",
+  "sites": [
+    {
+      "name": "LSBox ئومۇمىي قانال",
+      "type": "vod",
+      "url": "https://gh-proxy.com/https://raw.githubusercontent.com/Mr-losfer/lsbox/main/market/config/vod-default.json",
+      "description": "ئومۇمىي ۋىدېئو قانالى، كۆپ مەنبەلىك",
+      "recommend": true
+    },
+    {
+      "name": "LSBox لايىھە قانال",
+      "type": "live",
+      "url": "https://gh-proxy.com/https://raw.githubusercontent.com/Mr-losfer/lsbox/main/market/config/live-default.json",
+      "description": "گۈزەل تېلېۋىزىيە ۋە رادىئو قاناللىرى",
+      "recommend": true
+    }
+  ]
+}
