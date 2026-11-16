@@ -29,10 +29,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Language
@@ -54,8 +54,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,6 +63,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import can.losfer.lsbox.R
+import can.losfer.lsbox.ui.components.SettingsCardPosition
+import can.losfer.lsbox.ui.theme.cardContainer
 import can.losfer.lsbox.util.AppLanguage
 import can.losfer.lsbox.util.LanguageManager
 import kotlinx.coroutines.delay
@@ -77,8 +79,6 @@ private val greetings = listOf(
     Greeting("Salam"),
     Greeting("Bonjour"),
     Greeting("Hola"),
-    Greeting("こんにちは"),
-    Greeting("مرحبا"),
 )
 
 private data class LanguageOption(
@@ -96,9 +96,28 @@ private val languageOptions = listOf(
     LanguageOption(AppLanguage.System, "سېستېما تىلى", "System default", Icons.Filled.Settings),
 )
 
+/** 与 SettingsCard 一致的卡片圆角：首项上圆角、中间首尾直角、末项下圆角 */
+private fun cardShape(position: SettingsCardPosition): RoundedCornerShape = when (position) {
+    SettingsCardPosition.SINGLE -> RoundedCornerShape(32.dp)
+    SettingsCardPosition.FIRST -> RoundedCornerShape(
+        topStart = 32.dp, topEnd = 32.dp, bottomEnd = 4.dp, bottomStart = 4.dp,
+    )
+    SettingsCardPosition.MIDDLE -> RoundedCornerShape(4.dp)
+    SettingsCardPosition.LAST -> RoundedCornerShape(
+        topStart = 4.dp, topEnd = 4.dp, bottomEnd = 32.dp, bottomStart = 32.dp,
+    )
+}
+
+private fun positionOf(index: Int, size: Int): SettingsCardPosition = when {
+    size <= 1 -> SettingsCardPosition.SINGLE
+    index == 0 -> SettingsCardPosition.FIRST
+    index == size - 1 -> SettingsCardPosition.LAST
+    else -> SettingsCardPosition.MIDDLE
+}
+
 /**
- * 首启语言引导页 —— iPhone Hello 风格欢迎区 + Material 3 语言列表。
- * 顶部（状态栏）+ 底部（导航栏）安全距离均已处理。
+ * 首启语言引导页 —— 顶部 iPhone Hello 风格欢迎区 + 底部 Material 3 分组卡片语言列表。
+ * 语言列表与"我的"页面一致：首项上圆角、末项下圆角、中间纵向拼接。
  */
 @Composable
 fun WelcomeScreen(onFinished: () -> Unit) {
@@ -115,9 +134,9 @@ fun WelcomeScreen(onFinished: () -> Unit) {
 
     val transition = rememberInfiniteTransition(label = "welcome-glow")
     val glow by transition.animateFloat(
-        initialValue = 0.94f,
+        initialValue = 0.96f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(1600, easing = LinearEasing), RepeatMode.Reverse),
+        animationSpec = infiniteRepeatable(tween(1800, easing = LinearEasing), RepeatMode.Reverse),
         label = "glow",
     )
 
@@ -134,11 +153,11 @@ fun WelcomeScreen(onFinished: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.42f)
+                    .weight(0.44f)
                     .background(
                         Brush.verticalGradient(
                             colors = listOf(
-                                scheme.primaryContainer.copy(alpha = 0.55f),
+                                scheme.primaryContainer.copy(alpha = 0.5f),
                                 scheme.surface,
                             )
                         )
@@ -147,12 +166,14 @@ fun WelcomeScreen(onFinished: () -> Unit) {
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(112.dp)
-                            .clip(RoundedCornerShape(34.dp))
+                            .size(104.dp)
+                            .clip(RoundedCornerShape(32.dp))
                             .background(scheme.surfaceBright)
                             .graphicsLayer { scaleX = glow; scaleY = glow },
                         contentAlignment = Alignment.Center,
@@ -160,33 +181,34 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                         Image(
                             painter = painterResource(R.drawable.ic_app_logo),
                             contentDescription = null,
-                            modifier = Modifier.size(96.dp),
+                            modifier = Modifier.size(88.dp),
                         )
                     }
 
-                    Spacer(Modifier.height(18.dp))
+                    Spacer(Modifier.height(16.dp))
 
                     Text(
                         text = "LSBox",
                         style = MaterialTheme.typography.displaySmall.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 40.sp,
+                            fontSize = 38.sp,
                         ),
                         color = scheme.primary,
                     )
 
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(8.dp))
 
-                    // iPhone hello 风格多语言问候轮播
                     Box(
-                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         AnimatedContent(
                             targetState = slideIndex,
                             transitionSpec = {
-                                (fadeIn(tween(500)) + slideInVertically { 18 }) togetherWith
-                                    (fadeOut(tween(500)) + slideOutVertically { -18 })
+                                (fadeIn(tween(500)) + slideInVertically { 16 }) togetherWith
+                                    (fadeOut(tween(500)) + slideOutVertically { -16 })
                             },
                             label = "hello",
                         ) { idx ->
@@ -194,7 +216,7 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                                 text = greetings[idx].text,
                                 style = MaterialTheme.typography.headlineMedium.copy(
                                     fontWeight = FontWeight.Light,
-                                    fontSize = 30.sp,
+                                    fontSize = 28.sp,
                                 ),
                                 color = scheme.onSurface,
                                 textAlign = TextAlign.Center,
@@ -202,19 +224,18 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                         }
                     }
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(10.dp))
 
-                    // 轮播指示圆点
-                    Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         greetings.indices.forEach { i ->
                             val active = i == slideIndex
                             Box(
                                 modifier = Modifier
-                                    .size(if (active) 8.dp else 6.dp)
+                                    .size(if (active) 7.dp else 5.dp)
                                     .clip(CircleShape)
                                     .background(
                                         if (active) scheme.primary
-                                        else scheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                        else scheme.onSurfaceVariant.copy(alpha = 0.28f)
                                     ),
                             )
                         }
@@ -224,61 +245,60 @@ fun WelcomeScreen(onFinished: () -> Unit) {
 
             // ===== 选择语言标题 =====
             Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
             ) {
-                HorizontalDivider(color = scheme.outlineVariant.copy(alpha = 0.5f))
-                Spacer(Modifier.height(16.dp))
+                HorizontalDivider(color = scheme.outlineVariant.copy(alpha = 0.45f))
+                Spacer(Modifier.height(14.dp))
                 Text(
                     text = "تىل تاللاڭ  ·  Choose Language",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = scheme.onSurface,
-                    textAlign = TextAlign.Center,
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(3.dp))
                 Text(
                     text = "ئۆزىڭىزگە ماس كېلىدىغان تىلنى تاللاڭ",
                     style = MaterialTheme.typography.bodySmall,
                     color = scheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(14.dp))
             }
 
-            // ===== 底部语言列表 =====
-            LazyColumn(
+            // ===== 底部语言列表（分组卡片：上下圆角、中间拼接）=====
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.58f)
-                    .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                    .weight(0.56f)
+                    .padding(horizontal = 20.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                itemsIndexed(languageOptions) { index, option ->
+                languageOptions.forEachIndexed { index, option ->
                     val isSelected = selected == index
+                    val shape = cardShape(positionOf(index, languageOptions.size))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(18.dp))
+                            .clip(shape)
                             .background(
-                                if (isSelected) scheme.primaryContainer else scheme.surfaceContainerLow
+                                if (isSelected) scheme.primaryContainer else scheme.cardContainer
                             )
                             .clickable {
                                 selected = index
                                 LanguageManager.set(option.language)
                                 LanguageManager.markPicked()
-                                // 重建 Activity：BaseActivity.attachBaseContext 用新 locale 包裹 → 语言即时生效
                                 (context as? Activity)?.recreate() ?: onFinished()
                             }
-                            .padding(horizontal = 18.dp, vertical = 14.dp),
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(44.dp)
+                                .size(42.dp)
                                 .clip(CircleShape)
                                 .background(
-                                    if (isSelected) scheme.primary
-                                    else scheme.primaryContainer
+                                    if (isSelected) scheme.primary else scheme.primaryContainer
                                 ),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -286,10 +306,10 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                                 imageVector = option.icon,
                                 contentDescription = null,
                                 tint = if (isSelected) scheme.onPrimary else scheme.onPrimaryContainer,
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier.size(22.dp),
                             )
                         }
-                        Spacer(Modifier.width(16.dp))
+                        Spacer(Modifier.width(14.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = option.nativeName,
@@ -316,7 +336,7 @@ fun WelcomeScreen(onFinished: () -> Unit) {
                         }
                     }
                 }
-                item { Spacer(Modifier.height(8.dp)) }
+                Spacer(Modifier.height(12.dp))
             }
         }
     }
