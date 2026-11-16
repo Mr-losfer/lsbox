@@ -64,6 +64,8 @@ internal fun DetailContent(
     val followRecord by vm.follow.collectAsState()
     val description = remember(info.des) { removeHtmlTag(info.des) }
     var followScheduleOpen by rememberSaveable { mutableStateOf(false) }
+    var episodePickOpen by rememberSaveable { mutableStateOf(false) }
+    var exportIndexes by remember { mutableStateOf<List<Int>?>(null) }
 
     val currentSource = ApiConfig.get().getSource(vm.firstsourceKey)
     val displaySourceName = currentSource?.name ?: vm.firstsourceKey
@@ -94,6 +96,7 @@ internal fun DetailContent(
                 onCast = { activity.openCast() },
                 onCollect = { vm.toggleCollect() },
                 onFollow = { followScheduleOpen = true },
+                onCopyEpisodes = { episodePickOpen = true },
                 vm = vm,
                 rollPaused = heroRollPaused,
             )
@@ -165,6 +168,25 @@ internal fun DetailContent(
         item(key = "tmdb_genres") {
             TmdbGenreSection(vm, info.name, info.en, info.year)
         }
+    }
+
+    if (episodePickOpen) {
+        EpisodePickSheet(
+            episodes = episodes,
+            onDismiss = { episodePickOpen = false },
+            onConfirm = { picked ->
+                episodePickOpen = false
+                exportIndexes = picked
+            },
+        )
+    }
+
+    exportIndexes?.let { picked ->
+        EpisodeLinkSheet(
+            episodes = episodes,
+            selectedIndexes = picked,
+            onDismiss = { exportIndexes = null },
+        )
     }
 
     if (followScheduleOpen) {
