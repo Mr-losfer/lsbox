@@ -217,6 +217,7 @@ internal fun DetailHero(
     onCast: () -> Unit,
     onCollect: () -> Unit,
     onFollow: () -> Unit,
+    onCopyEpisodes: () -> Unit,
     vm: DetailViewModel,
     rollPaused: Boolean = false,
     modifier: Modifier = Modifier,
@@ -296,6 +297,7 @@ internal fun DetailHero(
                     onMusic = onMusic,
                     onCast = onCast,
                     onFollow = onFollow,
+                    onCopyEpisodes = onCopyEpisodes,
                     captionColor = captionColor,
                     flat = true,
                     modifier = Modifier.padding(top = HeroContentTopPadding),
@@ -386,6 +388,7 @@ internal fun DetailHero(
             onMusic = onMusic,
             onCast = onCast,
             onFollow = onFollow,
+            onCopyEpisodes = onCopyEpisodes,
             captionColor = captionColor,
             modifier = Modifier.padding(
                 start = HeroContentHorizontalPadding,
@@ -416,6 +419,7 @@ private fun DetailHeroTopActions(
             contentDescription = stringResource(R.string.common_back),
             onClick = onBack,
             fallbackColor = fallbackColor,
+            mirrorInRtl = true,
         )
         Spacer(Modifier.weight(1f))
         TopBarActionBox(
@@ -447,6 +451,7 @@ private fun DetailHeroInfoBlock(
     onMusic: () -> Unit,
     onCast: () -> Unit,
     onFollow: () -> Unit,
+    onCopyEpisodes: () -> Unit,
     captionColor: Color,
     flat: Boolean = false,
     modifier: Modifier = Modifier,
@@ -501,6 +506,7 @@ private fun DetailHeroInfoBlock(
             onMusic = onMusic,
             onCast = onCast,
             onFollow = onFollow,
+            onCopyEpisodes = onCopyEpisodes,
             modifier = Modifier.padding(top = HeroButtonRowSpacing),
         )
     }
@@ -512,6 +518,7 @@ internal fun DetailActionRow(
     onMusic: () -> Unit,
     onCast: () -> Unit,
     onFollow: () -> Unit,
+    onCopyEpisodes: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -536,6 +543,12 @@ internal fun DetailActionRow(
             contentDescription = stringResource(R.string.tab_following),
             selected = followed,
             onClick = onFollow,
+        )
+        HeroCircleButton(
+            iconRes = R.drawable.ic_episode_copy,
+            contentDescription = stringResource(R.string.episode_copy_action),
+            selected = false,
+            onClick = onCopyEpisodes,
         )
     }
 }
