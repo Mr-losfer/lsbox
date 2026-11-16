@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import can.losfer.lsbox.ui.components.mirrorInRtl
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -213,6 +214,7 @@ fun PlayerTopBar(state: PlayerUiState, actions: PlayerActions) {
                                 contentDescription = stringResource(R.string.common_back),
                                 modifier = Modifier
                                     .size(30.dp)
+                                    .mirrorInRtl()
                                     .testTag(TOP_BAR_BACK_TAG),
                             )
                         }
