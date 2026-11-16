@@ -1,6 +1,6 @@
-package com.github.avbox.osc.sourcedata
+package can.losfer.lsbox.sourcedata
 
-import com.github.avbox.osc.bean.Movie
+import can.losfer.lsbox.bean.Movie
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

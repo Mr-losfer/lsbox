@@ -1,4 +1,4 @@
-package com.github.avbox.osc.player.engine
+package can.losfer.lsbox.player.engine
 
 import androidx.media3.common.C
 import org.junit.Assert.assertEquals

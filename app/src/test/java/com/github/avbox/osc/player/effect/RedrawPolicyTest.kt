@@ -1,6 +1,6 @@
-package com.github.avbox.osc.player.effect
+package can.losfer.lsbox.player.effect
 
-import com.github.avbox.osc.player.core.RedrawPolicy
+import can.losfer.lsbox.player.core.RedrawPolicy
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.github.avbox.osc.api
+package can.losfer.lsbox.api
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

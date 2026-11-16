@@ -1,6 +1,6 @@
-package com.github.avbox.osc.ui.page
+package can.losfer.lsbox.ui.page
 
-import com.github.avbox.osc.bean.Movie
+import can.losfer.lsbox.bean.Movie
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

@@ -1,6 +1,6 @@
 package com.github.catvod.crawler.js
 
-import com.github.avbox.osc.util.AppLog
+import can.losfer.lsbox.util.AppLog
 import java.util.ArrayDeque
 import java.util.concurrent.ExecutorService
 

@@ -1,4 +1,4 @@
-package com.github.avbox.osc.ui.page
+package can.losfer.lsbox.ui.page
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

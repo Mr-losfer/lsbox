@@ -1,4 +1,4 @@
-package com.github.avbox.osc.ui.player
+package can.losfer.lsbox.ui.player
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,11 +15,11 @@ import androidx.compose.ui.test.up
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.avbox.osc.ui.ComposeTestActivity
-import com.github.avbox.osc.testing.TestApplication
-import com.github.avbox.osc.player.gesture.VideoGestureActions
-import com.github.avbox.osc.player.gesture.VideoGestureHandler
-import com.github.avbox.osc.player.gesture.VideoGestureSession
+import can.losfer.lsbox.ui.ComposeTestActivity
+import can.losfer.lsbox.testing.TestApplication
+import can.losfer.lsbox.player.gesture.VideoGestureActions
+import can.losfer.lsbox.player.gesture.VideoGestureHandler
+import can.losfer.lsbox.player.gesture.VideoGestureSession
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule

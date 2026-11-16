@@ -3,12 +3,12 @@ package com.github.catvod.crawler
 import android.util.Log
 
 import com.github.catvod.crawler.js.JsSpider
-import com.github.avbox.osc.io.FileUtils
-import com.github.avbox.osc.util.AppContextHolder
-import com.github.avbox.osc.util.AppLog
-import com.github.avbox.osc.util.MD5
-import com.github.avbox.osc.util.RegexUtils
-import com.github.avbox.osc.util.net.Http
+import can.losfer.lsbox.io.FileUtils
+import can.losfer.lsbox.util.AppContextHolder
+import can.losfer.lsbox.util.AppLog
+import can.losfer.lsbox.util.MD5
+import can.losfer.lsbox.util.RegexUtils
+import can.losfer.lsbox.util.net.Http
 
 import java.io.File
 import java.io.FileOutputStream

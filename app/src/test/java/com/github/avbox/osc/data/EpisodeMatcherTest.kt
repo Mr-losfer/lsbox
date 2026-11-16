@@ -1,6 +1,6 @@
-package com.github.avbox.osc.data
+package can.losfer.lsbox.data
 
-import com.github.avbox.osc.bean.VodInfo
+import can.losfer.lsbox.bean.VodInfo
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

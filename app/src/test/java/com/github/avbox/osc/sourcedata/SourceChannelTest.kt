@@ -1,4 +1,4 @@
-package com.github.avbox.osc.sourcedata
+package can.losfer.lsbox.sourcedata
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first

@@ -1,4 +1,4 @@
-package com.github.avbox.osc.player.host
+package can.losfer.lsbox.player.host
 
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test

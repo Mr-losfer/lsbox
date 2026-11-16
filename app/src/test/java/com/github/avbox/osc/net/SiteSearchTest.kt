@@ -1,6 +1,6 @@
-package com.github.avbox.osc.net
+package can.losfer.lsbox.net
 
-import com.github.avbox.osc.bean.SourceBean
+import can.losfer.lsbox.bean.SourceBean
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

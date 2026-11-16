@@ -1,9 +1,9 @@
-package com.github.avbox.osc.player.engine
+package can.losfer.lsbox.player.engine
 
 import androidx.media3.common.Format
 import androidx.media3.common.MimeTypes
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.avbox.osc.testing.TestApplication
+import can.losfer.lsbox.testing.TestApplication
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

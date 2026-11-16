@@ -1,6 +1,6 @@
-package com.github.avbox.osc.player.controller
+package can.losfer.lsbox.player.controller
 
-import com.github.avbox.osc.player.BasePlayerView
+import can.losfer.lsbox.player.BasePlayerView
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

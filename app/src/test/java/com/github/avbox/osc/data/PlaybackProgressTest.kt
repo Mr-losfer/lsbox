@@ -1,4 +1,4 @@
-package com.github.avbox.osc.data
+package can.losfer.lsbox.data
 
 import com.google.gson.JsonParser
 import org.junit.Assert.assertEquals

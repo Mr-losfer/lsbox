@@ -1,6 +1,6 @@
-package com.github.avbox.osc.util.kv
+package can.losfer.lsbox.util.kv
 
-import com.github.avbox.osc.util.kvcodec.KVDecoder
+import can.losfer.lsbox.util.kvcodec.KVDecoder
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

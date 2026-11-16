@@ -1,4 +1,4 @@
-package com.github.avbox.osc.bean
+package can.losfer.lsbox.bean
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName

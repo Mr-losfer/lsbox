@@ -1,4 +1,4 @@
-package com.github.avbox.osc.net
+package can.losfer.lsbox.net
 
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.junit.Assert.assertEquals

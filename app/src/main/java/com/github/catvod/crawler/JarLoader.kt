@@ -7,16 +7,16 @@ import android.util.Log
 
 import com.github.catvod.Proxy
 import com.github.catvod.net.OkHttp
-import com.github.avbox.osc.io.FileUtils
-import com.github.avbox.osc.server.ControlManager
-import com.github.avbox.osc.server.RemoteServer
-import com.github.avbox.osc.util.AppContextHolder
-import com.github.avbox.osc.boot.BootGuard
-import com.github.avbox.osc.util.AppLog
-import com.github.avbox.osc.util.MD5
-import com.github.avbox.osc.util.RegexUtils
-import com.github.avbox.osc.util.SpiderInitWatch
-import com.github.avbox.osc.util.net.Http
+import can.losfer.lsbox.io.FileUtils
+import can.losfer.lsbox.server.ControlManager
+import can.losfer.lsbox.server.RemoteServer
+import can.losfer.lsbox.util.AppContextHolder
+import can.losfer.lsbox.boot.BootGuard
+import can.losfer.lsbox.util.AppLog
+import can.losfer.lsbox.util.MD5
+import can.losfer.lsbox.util.RegexUtils
+import can.losfer.lsbox.util.SpiderInitWatch
+import can.losfer.lsbox.util.net.Http
 
 import org.json.JSONObject
 

@@ -1,4 +1,4 @@
-package com.github.avbox.osc.ui.components
+package can.losfer.lsbox.ui.components
 
 import kotlin.math.hypot
 import org.junit.Assert.assertEquals

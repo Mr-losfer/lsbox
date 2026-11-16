@@ -8,16 +8,16 @@ plugins {
 }
 
 android {
-    namespace = "com.github.avbox.osc"
+    namespace = "can.losfer.lsbox"
     compileSdk = libs.versions.compileSdk.get().toInt()
     ndkVersion = libs.versions.ndk.get()
 
     defaultConfig {
-        applicationId = "com.github.avbox.osc"
+        applicationId = "can.losfer.lsbox"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 35
-        versionName = "1.5.0"
+        versionCode = 36
+        versionName = "1.5.1"
         multiDexEnabled = true
         ndk {
             abiFilters += setOf("arm64-v8a")

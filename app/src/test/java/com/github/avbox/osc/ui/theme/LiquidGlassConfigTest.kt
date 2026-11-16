@@ -1,4 +1,4 @@
-package com.github.avbox.osc.ui.theme
+package can.losfer.lsbox.ui.theme
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

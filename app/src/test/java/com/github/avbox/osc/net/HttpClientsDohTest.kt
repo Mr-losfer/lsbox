@@ -1,4 +1,4 @@
-package com.github.avbox.osc.net
+package can.losfer.lsbox.net
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser

@@ -1,6 +1,6 @@
-package com.github.avbox.osc.api
+package can.losfer.lsbox.api
 
-import com.github.avbox.osc.bean.TmdbSearchHit
+import can.losfer.lsbox.bean.TmdbSearchHit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue

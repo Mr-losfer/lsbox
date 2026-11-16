@@ -1,4 +1,4 @@
-package com.github.avbox.osc.player.gesture
+package can.losfer.lsbox.player.gesture
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

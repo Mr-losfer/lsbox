@@ -1,9 +1,9 @@
-package com.github.avbox.osc.ui
+package can.losfer.lsbox.ui
 
-import com.github.avbox.osc.player.core.PlayState
-import com.github.avbox.osc.ui.music.LyricLine
-import com.github.avbox.osc.ui.music.MusicPlayMode
-import com.github.avbox.osc.ui.music.MusicPlayerState
+import can.losfer.lsbox.player.core.PlayState
+import can.losfer.lsbox.ui.music.LyricLine
+import can.losfer.lsbox.ui.music.MusicPlayMode
+import can.losfer.lsbox.ui.music.MusicPlayerState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull

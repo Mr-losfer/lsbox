@@ -1,4 +1,4 @@
-package com.github.avbox.osc.data
+package can.losfer.lsbox.data
 
 import kotlinx.coroutines.flow.Flow
 import org.junit.Assert.assertTrue

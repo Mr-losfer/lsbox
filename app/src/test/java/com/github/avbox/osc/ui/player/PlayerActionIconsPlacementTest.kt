@@ -1,4 +1,4 @@
-package com.github.avbox.osc.ui.player
+package can.losfer.lsbox.ui.player
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,11 +8,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.avbox.osc.ui.ComposeTestActivity
-import com.github.avbox.osc.R
-import com.github.avbox.osc.player.state.PlayerActions
-import com.github.avbox.osc.player.state.PlayerUiState
-import com.github.avbox.osc.testing.TestApplication
+import can.losfer.lsbox.ui.ComposeTestActivity
+import can.losfer.lsbox.R
+import can.losfer.lsbox.player.state.PlayerActions
+import can.losfer.lsbox.player.state.PlayerUiState
+import can.losfer.lsbox.testing.TestApplication
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test

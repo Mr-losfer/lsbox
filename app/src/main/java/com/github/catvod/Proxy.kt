@@ -1,7 +1,7 @@
 package com.github.catvod
 
-import com.github.avbox.osc.server.RemoteServer
-import com.github.avbox.osc.util.AppContextHolder
+import can.losfer.lsbox.server.RemoteServer
+import can.losfer.lsbox.util.AppContextHolder
 
 class Proxy {
 

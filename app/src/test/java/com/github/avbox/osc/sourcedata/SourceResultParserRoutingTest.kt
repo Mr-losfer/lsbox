@@ -1,7 +1,7 @@
-package com.github.avbox.osc.sourcedata
+package can.losfer.lsbox.sourcedata
 
-import com.github.avbox.osc.bean.AbsXml
-import com.github.avbox.osc.ui.DetailResponseGuard
+import can.losfer.lsbox.bean.AbsXml
+import can.losfer.lsbox.ui.DetailResponseGuard
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking

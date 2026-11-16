@@ -1,4 +1,4 @@
-package com.github.avbox.osc.ui.music
+package can.losfer.lsbox.ui.music
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.github.avbox.osc.testing
+package can.losfer.lsbox.testing
 
 import android.app.Application
 

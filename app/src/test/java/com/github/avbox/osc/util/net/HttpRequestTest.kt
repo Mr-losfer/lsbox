@@ -1,4 +1,4 @@
-package com.github.avbox.osc.util.net
+package can.losfer.lsbox.util.net
 
 import okhttp3.OkHttp
 import okhttp3.Request

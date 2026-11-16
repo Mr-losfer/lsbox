@@ -1,4 +1,4 @@
-package com.github.avbox.osc.data
+package can.losfer.lsbox.data
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope

@@ -1,8 +1,8 @@
-package com.github.avbox.osc.player.state
+package can.losfer.lsbox.player.state
 
-import com.github.avbox.osc.player.core.KernelPlayback
-import com.github.avbox.osc.player.core.PlayState
-import com.github.avbox.osc.player.core.deriveKernelPlayState
+import can.losfer.lsbox.player.core.KernelPlayback
+import can.losfer.lsbox.player.core.PlayState
+import can.losfer.lsbox.player.core.deriveKernelPlayState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test

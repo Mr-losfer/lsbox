@@ -1,7 +1,7 @@
-package com.github.avbox.osc.player.state
+package can.losfer.lsbox.player.state
 
-import com.github.avbox.osc.player.core.PlayState
-import com.github.avbox.osc.player.core.PlaybackStateMachine
+import can.losfer.lsbox.player.core.PlayState
+import can.losfer.lsbox.player.core.PlaybackStateMachine
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

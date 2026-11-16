@@ -1,6 +1,6 @@
-package com.github.avbox.osc.player
+package can.losfer.lsbox.player
 
-import com.github.avbox.osc.bean.VodInfo
+import can.losfer.lsbox.bean.VodInfo
 import java.util.LinkedHashMap
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals

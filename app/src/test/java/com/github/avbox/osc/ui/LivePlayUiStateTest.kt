@@ -1,6 +1,6 @@
-package com.github.avbox.osc.ui
+package can.losfer.lsbox.ui
 
-import com.github.avbox.osc.player.core.PlayState
+import can.losfer.lsbox.player.core.PlayState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

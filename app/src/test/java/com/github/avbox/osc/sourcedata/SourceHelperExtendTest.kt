@@ -1,8 +1,8 @@
-package com.github.avbox.osc.sourcedata
+package can.losfer.lsbox.sourcedata
 
-import com.github.avbox.osc.bean.AbsXml
-import com.github.avbox.osc.bean.Movie
-import com.github.avbox.osc.util.MD5
+import can.losfer.lsbox.bean.AbsXml
+import can.losfer.lsbox.bean.Movie
+import can.losfer.lsbox.util.MD5
 import com.google.gson.Gson
 import org.junit.Assert.assertEquals
 import org.junit.Test

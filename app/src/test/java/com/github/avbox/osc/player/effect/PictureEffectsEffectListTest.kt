@@ -1,6 +1,6 @@
-package com.github.avbox.osc.player.effect
+package can.losfer.lsbox.player.effect
 
-import com.github.avbox.osc.player.effect.anime4k.Anime4kEffect
+import can.losfer.lsbox.player.effect.anime4k.Anime4kEffect
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

@@ -1,4 +1,4 @@
-package com.github.avbox.osc.player.engine.iso
+package can.losfer.lsbox.player.engine.iso
 
 import android.net.Uri
 import androidx.media3.common.C

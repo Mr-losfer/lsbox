@@ -1,4 +1,4 @@
-package com.github.avbox.osc.player.effect
+package can.losfer.lsbox.player.effect
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

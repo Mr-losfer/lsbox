@@ -1,6 +1,6 @@
-package com.github.avbox.osc.ui.navbar
+package can.losfer.lsbox.ui.navbar
 
-import com.github.avbox.osc.ui.WindowWidthClass
+import can.losfer.lsbox.ui.WindowWidthClass
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

@@ -1,6 +1,6 @@
-package com.github.avbox.osc.ui
+package can.losfer.lsbox.ui
 
-import com.github.avbox.osc.bean.EpgInfo
+import can.losfer.lsbox.bean.EpgInfo
 import com.google.gson.JsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

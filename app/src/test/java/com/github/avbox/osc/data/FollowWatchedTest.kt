@@ -1,4 +1,4 @@
-package com.github.avbox.osc.data
+package can.losfer.lsbox.data
 
 import java.time.DayOfWeek
 import java.time.LocalDate

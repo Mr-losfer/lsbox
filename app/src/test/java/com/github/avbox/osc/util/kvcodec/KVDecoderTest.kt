@@ -1,4 +1,4 @@
-package com.github.avbox.osc.util.kvcodec
+package can.losfer.lsbox.util.kvcodec
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser

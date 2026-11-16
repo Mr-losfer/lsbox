@@ -1,4 +1,4 @@
-package com.github.avbox.osc.player.engine.iso
+package can.losfer.lsbox.player.engine.iso
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

@@ -1,9 +1,9 @@
-package com.github.avbox.osc.api
+package can.losfer.lsbox.api
 
-import com.github.avbox.osc.bean.TmdbEpisodeRef
-import com.github.avbox.osc.bean.TmdbSearchHit
-import com.github.avbox.osc.bean.TmdbSeason
-import com.github.avbox.osc.util.TmdbImages
+import can.losfer.lsbox.bean.TmdbEpisodeRef
+import can.losfer.lsbox.bean.TmdbSearchHit
+import can.losfer.lsbox.bean.TmdbSeason
+import can.losfer.lsbox.util.TmdbImages
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull

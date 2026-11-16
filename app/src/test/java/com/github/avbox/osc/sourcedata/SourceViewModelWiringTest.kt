@@ -1,4 +1,4 @@
-package com.github.avbox.osc.sourcedata
+package can.losfer.lsbox.sourcedata
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame

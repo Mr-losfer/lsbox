@@ -1,9 +1,9 @@
-package com.github.avbox.osc.player.state
+package can.losfer.lsbox.player.state
 
-import com.github.avbox.osc.bean.CastVideo
-import com.github.avbox.osc.player.effect.PictureEffectUnavailableReason
-import com.github.avbox.osc.player.effect.PicturePreset
-import com.github.avbox.osc.player.effect.PictureProfile
+import can.losfer.lsbox.bean.CastVideo
+import can.losfer.lsbox.player.effect.PictureEffectUnavailableReason
+import can.losfer.lsbox.player.effect.PicturePreset
+import can.losfer.lsbox.player.effect.PictureProfile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull

@@ -1,7 +1,7 @@
-package com.github.avbox.osc.ui
+package can.losfer.lsbox.ui
 
-import com.github.avbox.osc.bean.LiveChannelItem
-import com.github.avbox.osc.bean.LiveSettingGroup
+import can.losfer.lsbox.bean.LiveChannelItem
+import can.losfer.lsbox.bean.LiveSettingGroup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

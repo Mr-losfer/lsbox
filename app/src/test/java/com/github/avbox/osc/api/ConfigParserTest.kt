@@ -1,7 +1,7 @@
-package com.github.avbox.osc.api
+package can.losfer.lsbox.api
 
-import com.github.avbox.osc.bean.LiveSettingItem
-import com.github.avbox.osc.bean.SourceBean
+import can.losfer.lsbox.bean.LiveSettingItem
+import can.losfer.lsbox.bean.SourceBean
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject

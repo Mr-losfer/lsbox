@@ -1,7 +1,7 @@
-package com.github.avbox.osc.ui.page
+package can.losfer.lsbox.ui.page
 
-import com.github.avbox.osc.api.AppBootstrap
-import com.github.avbox.osc.api.BootGeneration
+import can.losfer.lsbox.api.AppBootstrap
+import can.losfer.lsbox.api.BootGeneration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
