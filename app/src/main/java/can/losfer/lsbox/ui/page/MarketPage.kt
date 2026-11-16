@@ -83,6 +83,7 @@ fun MarketPage(
                 R.drawable.ic_arrow_left,
                 stringResource(R.string.common_back),
                 onClick = onNavigateBack,
+                mirrorInRtl = true,
             )
         },
     ) { topPad, navBottom ->
