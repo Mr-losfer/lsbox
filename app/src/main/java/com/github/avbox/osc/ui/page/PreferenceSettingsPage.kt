@@ -331,4 +331,6 @@ private fun languageLabelRes(lang: AppLanguage): Int = when (lang) {
     AppLanguage.English -> R.string.settings_language_en
     AppLanguage.TraditionalTW -> R.string.settings_language_zh_hant_tw
     AppLanguage.TraditionalHK -> R.string.settings_language_zh_hant_hk
+    AppLanguage.Uyghur -> R.string.settings_language_ug
+    AppLanguage.Kazakh -> R.string.settings_language_kk
 }

@@ -130,4 +130,9 @@ object KVKeys {
     const val TMDB_IMAGE_BASE = "tmdb_image_base"
     const val TMDB_API_BASE_DEFAULT = "https://api.tmdb.org"
     const val TMDB_IMAGE_BASE_DEFAULT = "https://images.tmdb.org/t/p"
+    const val UPDATE_LAST_CHECK = "update_last_check_ms"
+    const val UPDATE_SKIP_VERSION = "update_skip_version"
+    const val UPDATE_DOWNLOAD_ID = "update_download_id"
+    const val UYGHUR_FONT = "uyghur_font"
+    const val LANGUAGE_PICKED = "language_picked"
 }

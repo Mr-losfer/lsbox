@@ -8,19 +8,23 @@ import android.net.Uri
 import android.os.SystemClock
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,12 +32,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
@@ -58,6 +65,10 @@ import com.github.avbox.osc.ui.components.SettingsOptionMenuRow
 import com.github.avbox.osc.ui.components.SettingsRow
 import com.github.avbox.osc.ui.settings.UiSettingsState
 import com.github.avbox.osc.util.DefaultConfig
+import com.github.avbox.osc.util.UyghurFontManager
+import com.github.avbox.osc.util.UyghurFont
+import com.github.avbox.osc.update.UpdateManager
+import com.github.avbox.osc.update.UpdateResult
 import com.github.avbox.osc.util.HistoryHelper
 import com.github.avbox.osc.util.SearchSettingsState
 import com.github.avbox.osc.util.SpiderStorageNotice
@@ -150,6 +161,9 @@ fun SettingsPage(
     val context = LocalContext.current
     val versionName = remember { DefaultConfig.appVersionName(context) ?: "" }
     var aboutSheet by remember { mutableStateOf(false) }
+    var fontSheet by remember { mutableStateOf(false) }
+    var updateMessage by remember { mutableStateOf<String?>(null) }
+    val updateScope = rememberCoroutineScope()
 
     val listState = rememberScrollState()
 
@@ -302,6 +316,33 @@ fun SettingsPage(
             SettingsGroup(title = null) {
                 SettingsCard(SettingsCardPosition.FIRST) {
                     SettingsRow(
+                        title = stringResource(R.string.font_settings),
+                        subtitle = stringResource(R.string.font_settings_subtitle),
+                        iconRes = R.drawable.ic_settings_theme,
+                        valueText = UyghurFontManager.current().displayName,
+                        onClick = { fontSheet = true },
+                    )
+                }
+                SettingsCard(SettingsCardPosition.MIDDLE) {
+                    SettingsRow(
+                        title = stringResource(R.string.update_check),
+                        subtitle = stringResource(R.string.update_checking),
+                        iconRes = R.drawable.ic_settings_api,
+                        onClick = {
+                            updateScope.launch {
+                                val r = UpdateManager.check()
+                                updateMessage = when (r) {
+                                    is UpdateResult.Available -> r.release.versionName
+                                    is UpdateResult.UpToDate -> "uptodate"
+                                    is UpdateResult.Error -> "error"
+                                }
+                            }
+                        },
+                    )
+                }
+
+                SettingsCard(SettingsCardPosition.LAST) {
+                    SettingsRow(
                         title = stringResource(R.string.settings_about),
                         subtitle = stringResource(R.string.settings_about_subtitle),
                         iconRes = R.drawable.ic_settings_about,
@@ -325,6 +366,67 @@ fun SettingsPage(
         AboutSheet(versionName = versionName, onDismiss = { aboutSheet = false })
     }
 
+    if (fontSheet) {
+        FontPickerSheet(
+            onDismiss = { fontSheet = false },
+            onSelected = { UyghurFontManager.set(it); fontSheet = false },
+        )
+    }
+
+    updateMessage?.let { msg ->
+        val text = when (msg) {
+            "uptodate" -> stringResource(R.string.update_no_new)
+            "error" -> stringResource(R.string.update_failed)
+            else -> stringResource(R.string.update_title, msg)
+        }
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+        updateMessage = null
+    }
+
+}
+
+@Composable
+private fun FontPickerSheet(
+    onDismiss: () -> Unit,
+    onSelected: (UyghurFont) -> Unit,
+) {
+    var current by remember { mutableStateOf(UyghurFontManager.current()) }
+    AVBoxBottomSheet(
+        onDismissRequest = onDismiss,
+        title = stringResource(R.string.font_page_title),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.font_page_desc),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            UyghurFontManager.available().forEach { font ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { current = font; onSelected(font) }
+                        .padding(horizontal = 12.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RadioButton(selected = font == current, onClick = { current = font; onSelected(font) })
+                    Text(
+                        text = font.displayName,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -348,6 +450,18 @@ private fun AboutSheet(versionName: String, onDismiss: () -> Unit) {
                 )
             }
             Text(
+                text = stringResource(R.string.settings_about_author),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+            Text(
+                text = stringResource(R.string.settings_about_upstream),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+            Text(
                 text = stringResource(R.string.settings_about_disclaimer),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -359,7 +473,7 @@ private fun AboutSheet(versionName: String, onDismiss: () -> Unit) {
 
 private const val AboutSheetHeightFraction = 0.6f
 
-private const val GITHUB_REPO_URL = "https://github.com/XiaochangXu/AVBox"
+private const val GITHUB_REPO_URL = "https://github.com/Mr-losfer/lsbox"
 
 private fun openExternalUrl(context: Context, url: String) {
     try {

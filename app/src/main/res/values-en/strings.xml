@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AVBox</string>
+    <string name="app_name">LSBox</string>
 
     <string name="settings_language">Language</string>
     <string name="settings_group_language_layout">Language &amp; Layout</string>
@@ -600,7 +600,7 @@
     <string name="toast_local_missing_files_all_files">%1$d files in the same folder have not been copied. Select the folder containing this config (with “All files access”, the original folder can be referenced directly)</string>
     <string name="toast_storage_asked_by_spider">Requested by the spider module</string>
     <string name="toast_local_tree_denied">Folder access for this config was not granted, import cancelled (tap again to retry)</string>
-    <string name="toast_local_tree_forbidden">This config sits in a folder the system never allows granting (storage root / Download / Android). Move it into a folder you created (e.g. Phone storage/AVBox/) and import again.</string>
+    <string name="toast_local_tree_forbidden">This config sits in a folder the system never allows granting (storage root / Download / Android). Move it into a folder you created (e.g. Phone storage/LSBox/) and import again.</string>
     <string name="toast_local_refs_missing">%1$d referenced files in the same folder have not been copied, so this source may not work (re-import to fix)</string>
     <string name="player_channel_mono">Mono</string>
     <string name="player_channel_stereo">Stereo</string>
@@ -634,4 +634,25 @@
     <string name="osd_tunnel">Tunnel</string>
     <string name="osd_preload">Preload</string>
     <string name="osd_cache">Cache</string>
+    <string name="update_title">New version v%1$s available</string>
+    <string name="update_current">Current version v%1$s</string>
+    <string name="update_no_notes">No release notes</string>
+    <string name="update_confirm">Update now</string>
+    <string name="update_skip">Skip this version</string>
+    <string name="update_later">Later</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_no_new">Already up to date</string>
+    <string name="update_failed">Update check failed</string>
+    <string name="font_page_title">Uyghur Fonts</string>
+    <string name="font_page_desc">Choose your preferred Uyghur font, default UKIJ Tuz</string>
+    <string name="font_settings">Font Settings</string>
+    <string name="font_settings_subtitle">Choose Uyghur display font</string>
+    <string name="welcome_choose_language">Choose Language</string>
+    <string name="welcome_start">Get Started</string>
+    <string name="welcome_subtitle">An open source video player</string>
+    <string name="settings_about_author">Author: Mr-losfer</string>
+    <string name="settings_about_upstream">Based on the original author\'s project, original credits preserved</string>
+    <string name="settings_language_ug">Uyghur</string>
+    <string name="settings_language_kk">Kazakh (Xinjiang)</string>
 </resources>

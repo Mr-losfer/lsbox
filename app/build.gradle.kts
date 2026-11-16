@@ -16,8 +16,8 @@ android {
         applicationId = "com.github.avbox.osc"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 34
-        versionName = "1.3.0"
+        versionCode = 35
+        versionName = "1.5.0"
         multiDexEnabled = true
         ndk {
             abiFilters += setOf("arm64-v8a")
@@ -34,7 +34,7 @@ android {
     }
 
     androidResources {
-        localeFilters += listOf("en", "zh", "zh-rCN", "b+zh+Hant", "zh-rTW", "zh-rHK")
+        localeFilters += listOf("en", "zh", "zh-rCN", "b+zh+Hant", "zh-rTW", "zh-rHK", "ug", "b+kk")
     }
 
     sourceSets {
@@ -105,7 +105,7 @@ ksp {
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
-            output.outputFileName.set("AVBox_${variant.buildType}.apk")
+            output.outputFileName.set("LSBox_${variant.buildType}.apk")
         }
     }
 }

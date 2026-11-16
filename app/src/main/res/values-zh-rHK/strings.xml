@@ -61,7 +61,7 @@
     <string name="toast_local_missing_files_all_files">還有 %1$d 個同目錄檔案沒搬過來，請選擇該設定所在的文件夾（開啟「所有檔案存取」後可直接引用原目錄，不必搬檔案）</string>
     <string name="toast_storage_asked_by_spider">權限由爬蟲模組申請</string>
     <string name="toast_local_tree_denied">沒取得該設定所在文件夾的授權，已取消匯入（可再點一次重試）</string>
-    <string name="toast_local_tree_forbidden">該設定在系統不允許授權的目錄裡（儲存根／下載／Android），請將它放進自建文件夾（例如 手機儲存/AVBox/）後再匯入</string>
+    <string name="toast_local_tree_forbidden">該設定在系統不允許授權的目錄裡（儲存根／下載／Android），請將它放進自建文件夾（例如 手機儲存/LSBox/）後再匯入</string>
     <string name="config_pick_local">從本地選擇</string>
     <string name="search_history">搜尋記錄</string>
     <string name="search_history_clear">清除搜尋記錄</string>
@@ -90,4 +90,25 @@
     <string name="tab_following">追劇</string>
     <string name="tab_mine">我的</string>
     <string name="following_empty">暫無追劇</string>
+    <string name="update_title">發現新版本 v%1$s</string>
+    <string name="update_current">當前版本 v%1$s</string>
+    <string name="update_no_notes">暫無更新說明</string>
+    <string name="update_confirm">立即更新</string>
+    <string name="update_skip">跳過此版本</string>
+    <string name="update_later">稍後再說</string>
+    <string name="update_check">檢查更新</string>
+    <string name="update_checking">正在檢查更新…</string>
+    <string name="update_no_new">已是最新版本</string>
+    <string name="update_failed">檢查更新失敗</string>
+    <string name="font_page_title">維吾爾語字體</string>
+    <string name="font_page_desc">選擇您喜歡的維吾爾語字體，默認 UKIJ Tuz</string>
+    <string name="font_settings">字體設置</string>
+    <string name="font_settings_subtitle">選擇維吾爾語顯示字體</string>
+    <string name="welcome_choose_language">選擇語言</string>
+    <string name="welcome_start">開始使用</string>
+    <string name="welcome_subtitle">一款開源的視頻播放器</string>
+    <string name="settings_about_author">作者：Mr-losfer</string>
+    <string name="settings_about_upstream">基於原作者項目二次開發，保留原作者聲明與出處</string>
+    <string name="settings_language_ug">維吾爾語</string>
+    <string name="settings_language_kk">哈薩克語(新疆)</string>
 </resources>

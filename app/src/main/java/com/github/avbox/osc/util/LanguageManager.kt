@@ -10,6 +10,8 @@ enum class AppLanguage(val tag: String?) {
     English("en"),
     TraditionalTW("zh-Hant-TW"),
     TraditionalHK("zh-Hant-HK"),
+    Uyghur("ug"),
+    Kazakh("kk"),
 }
 
 object LanguageManager {
@@ -30,6 +32,8 @@ object LanguageManager {
         AppLanguage.English,
         AppLanguage.TraditionalTW,
         AppLanguage.TraditionalHK,
+        AppLanguage.Uyghur,
+        AppLanguage.Kazakh,
     )
 
     fun current(): AppLanguage {
@@ -40,6 +44,21 @@ object LanguageManager {
         } catch (ignored: IllegalStateException) {
             AppLanguage.System
         }
+    }
+
+    fun markPicked() {
+        KV.put("language_picked", true)
+    }
+
+    fun isPicked(): Boolean = try {
+        KV.get<Boolean>("language_picked", false) ?: false
+    } catch (ignored: IllegalStateException) {
+        false
+    }
+
+    fun isUyghurOrKazakh(): Boolean {
+        val tag = current().tag ?: return false
+        return tag.startsWith("ug") || tag.startsWith("kk")
     }
 
     fun isTraditional(): Boolean {
