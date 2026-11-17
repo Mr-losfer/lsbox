@@ -1,5 +1,15 @@
 package can.losfer.lsbox.ui
 
+import android.widget.Toast
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import can.losfer.lsbox.download.LsDownloaderApi
+import can.losfer.lsbox.download.LsDownloaderException
+import can.losfer.lsbox.download.LsDownloaderState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -70,6 +80,47 @@ internal fun DetailContent(
     val currentSource = ApiConfig.get().getSource(vm.firstsourceKey)
     val displaySourceName = currentSource?.name ?: vm.firstsourceKey
     val heroRollPaused by vm.fullScreen.collectAsState()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    // LS 下载器开启且配置完整时才显示下载按钮
+    val lsDownloader = LsDownloaderState.config
+    val downloadEnabled = lsDownloader.enabled && lsDownloader.apiKey.isNotBlank()
+    fun submitDownload() {
+        val episode = episodes.getOrNull(playIndex) ?: episodes.firstOrNull()
+        val url = episode?.url.orEmpty()
+        if (url.isBlank()) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.detail_no_playable_content),
+                Toast.LENGTH_SHORT,
+            ).show()
+            return
+        }
+        val rawName = episode?.name?.trim().orEmpty()
+        val movieName = info.name?.trim().orEmpty()
+        val title = when {
+            rawName.isBlank() -> movieName.ifBlank { null }
+            movieName.isBlank() -> rawName
+            else -> "$movieName $rawName"
+        }
+        scope.launch {
+            val result = withContext(Dispatchers.IO) {
+                runCatching { LsDownloaderApi.createTask(url, title) }
+            }
+            val message = result.fold(
+                onSuccess = { context.getString(R.string.ls_dl_send_queued) },
+                onFailure = { e ->
+                    val apiError = e as? LsDownloaderException
+                    if (apiError?.duplicate == true) {
+                        context.getString(R.string.ls_dl_send_duplicate)
+                    } else {
+                        context.getString(R.string.ls_dl_send_failed, e.message.orEmpty())
+                    }
+                },
+            )
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
+    }
 
     LazyColumn(
         state = listState,
@@ -97,6 +148,7 @@ internal fun DetailContent(
                 onCollect = { vm.toggleCollect() },
                 onFollow = { followScheduleOpen = true },
                 onCopyEpisodes = { episodePickOpen = true },
+                onDownload = if (downloadEnabled) ({ submitDownload() }) else null,
                 vm = vm,
                 rollPaused = heroRollPaused,
             )
