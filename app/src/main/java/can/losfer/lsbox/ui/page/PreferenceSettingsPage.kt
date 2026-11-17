@@ -138,20 +138,12 @@ fun PreferenceSettingsScreen(onNavigateBack: () -> Unit) {
                         onCheckedChange = { UiSettingsState.gestureControlDisabled = it },
                     )
                 }
-                SettingsCard(SettingsCardPosition.MIDDLE) {
+                SettingsCard(SettingsCardPosition.LAST) {
                     SettingsSwitchRow(
                         title = stringResource(R.string.settings_nav_animation_disable),
                         leadingIconRes = R.drawable.ic_pref_nav_animation,
                         checked = uiConfig.navAnimationDisabled,
                         onCheckedChange = { UiSettingsState.navAnimationDisabled = it },
-                    )
-                }
-                SettingsCard(SettingsCardPosition.LAST) {
-                    SettingsSwitchRow(
-                        title = stringResource(R.string.settings_nav_live_hidden),
-                        leadingIconRes = R.drawable.ic_pref_nav_live_hidden,
-                        checked = uiConfig.navLiveHidden,
-                        onCheckedChange = { UiSettingsState.navLiveHidden = it },
                     )
                 }
             }
