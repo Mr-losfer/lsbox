@@ -218,6 +218,7 @@ internal fun DetailHero(
     onCollect: () -> Unit,
     onFollow: () -> Unit,
     onCopyEpisodes: () -> Unit,
+    onDownload: (() -> Unit)? = null,
     vm: DetailViewModel,
     rollPaused: Boolean = false,
     modifier: Modifier = Modifier,
@@ -298,6 +299,7 @@ internal fun DetailHero(
                     onCast = onCast,
                     onFollow = onFollow,
                     onCopyEpisodes = onCopyEpisodes,
+                    onDownload = onDownload,
                     captionColor = captionColor,
                     flat = true,
                     modifier = Modifier.padding(top = HeroContentTopPadding),
@@ -389,6 +391,7 @@ internal fun DetailHero(
             onCast = onCast,
             onFollow = onFollow,
             onCopyEpisodes = onCopyEpisodes,
+            onDownload = onDownload,
             captionColor = captionColor,
             modifier = Modifier.padding(
                 start = HeroContentHorizontalPadding,
@@ -452,6 +455,7 @@ private fun DetailHeroInfoBlock(
     onCast: () -> Unit,
     onFollow: () -> Unit,
     onCopyEpisodes: () -> Unit,
+    onDownload: (() -> Unit)? = null,
     captionColor: Color,
     flat: Boolean = false,
     modifier: Modifier = Modifier,
@@ -507,6 +511,7 @@ private fun DetailHeroInfoBlock(
             onCast = onCast,
             onFollow = onFollow,
             onCopyEpisodes = onCopyEpisodes,
+            onDownload = onDownload,
             modifier = Modifier.padding(top = HeroButtonRowSpacing),
         )
     }
@@ -519,6 +524,7 @@ internal fun DetailActionRow(
     onCast: () -> Unit,
     onFollow: () -> Unit,
     onCopyEpisodes: () -> Unit = {},
+    onDownload: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -550,6 +556,15 @@ internal fun DetailActionRow(
             selected = false,
             onClick = onCopyEpisodes,
         )
+        // 仅在开启 LS 下载器时出现
+        if (onDownload != null) {
+            HeroCircleButton(
+                iconRes = R.drawable.ic_ls_download,
+                contentDescription = stringResource(R.string.detail_download),
+                selected = false,
+                onClick = onDownload,
+            )
+        }
     }
 }
 
