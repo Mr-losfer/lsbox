@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -223,6 +224,8 @@ private fun TmdbCastSheet(vm: DetailViewModel, member: TmdbCastMember, onDismiss
     ) {
         val state = rememberCastPerson(vm, member.id)
         val person = (state as? CastPersonState.Ready)?.person
+        // 外层 Column 不带 weight，所有需要占满剩余高度的子级都改为显式定高：
+        // 只给“加载中”角标保留 weight，其余用 fillMaxHeight。
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -261,28 +264,31 @@ private fun TmdbCastSheet(vm: DetailViewModel, member: TmdbCastMember, onDismiss
                     }
                 }
             }
-            if (state is CastPersonState.Loading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(top = 16.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    ContainedLoadingIndicator(Modifier.size(CastSheetLoadingSize))
-                }
-            } else {
-                val biography = person?.biography.orEmpty()
-                if (biography.isNotBlank()) {
+            val biography = person?.biography.orEmpty()
+            // 固定一个始终存在的 weight 容器：加载中只放角标，加载完放可滚动简介。
+            // 之前两个分支分别用 weight(1f) 与 weight(1f)+verticalScroll，
+            // 切换瞬间会触发“滚动容器收到无限高度约束”而崩溃。
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 16.dp),
+            ) {
+                if (state is CastPersonState.Loading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        ContainedLoadingIndicator(Modifier.size(CastSheetLoadingSize))
+                    }
+                } else if (biography.isNotBlank()) {
                     Text(
                         text = biography,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState())
-                            .padding(top = 16.dp),
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
                     )
                 }
             }
