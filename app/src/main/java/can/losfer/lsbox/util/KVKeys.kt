@@ -135,4 +135,11 @@ object KVKeys {
     const val UPDATE_DOWNLOAD_ID = "update_download_id"
     const val UYGHUR_FONT = "uyghur_font"
     const val LANGUAGE_PICKED = "language_picked"
+
+    // LS 下载器（Media Super 远程下载服务）
+    const val LS_DL_ENABLE = "ls_dl_enable"
+    const val LS_DL_BASE_URL = "ls_dl_base_url"
+    const val LS_DL_API_KEY = "ls_dl_api_key"
+    const val LS_DL_SAVE_DIR = "ls_dl_save_dir"
+    const val LS_DL_BASE_URL_DEFAULT = "https://office.app.5ddd.com:34949"
 }
