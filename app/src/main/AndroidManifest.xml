@@ -105,6 +105,12 @@
             android:name=".ui.PlaySettingsActivity" />
         <activity
             android:name=".ui.PreferenceSettingsActivity" />
+        <activity
+            android:name=".ui.SettingsDetailActivity" />
+        <activity
+            android:name=".ui.LsDownloaderActivity" />
+        <activity
+            android:name=".ui.DownloadListActivity" />
 
         <service
             android:name=".dlna.DLNACastService"
