@@ -171,7 +171,6 @@ private fun MainContent() {
     val sheetHost = remember { SheetHostState() }
     val navConfig = UiSettingsState.config
     val navAnimationEnabled = !navConfig.navAnimationDisabled
-    val navLiveHidden = navConfig.navLiveHidden
 
     val selectTab: (Int) -> Unit = { index ->
         scope.launch {
@@ -232,8 +231,7 @@ private fun MainContent() {
     val glassTabs = remember(tabLabels) {
         AppTab.entries.mapIndexed { index, tab -> GlassTabItem(tab.icon, tabLabels[index]) }
     }
-    val liveActionLabel = stringResource(R.string.common_live)
-    val liveActionItem = remember(liveActionLabel) { GlassTabItem(R.drawable.ic_live_fab, liveActionLabel) }
+    // FloatingNavBar 保留 actionItem 参数，但当前不需要中心动作项
     val openLive: () -> Unit = remember(context) {
         { context.startActivity(Intent(context, LivePlayActivity::class.java)) }
     }
@@ -251,19 +249,6 @@ private fun MainContent() {
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         ) {
                             AppTab.entries.forEachIndexed { index, tab ->
-                                if (!navLiveHidden && index == NavMetrics.actionSlotFor(AppTab.entries.size)) {
-                                    ShortNavigationBarItem(
-                                        selected = false,
-                                        onClick = openLive,
-                                        icon = {
-                                            Icon(
-                                                painterResource(liveActionItem.iconRes),
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        label = null,
-                                    )
-                                }
                                 val selected = pagerState.targetPage == index
                                 ShortNavigationBarItem(
                                     selected = selected,
@@ -359,7 +344,7 @@ private fun MainContent() {
                         tabs = glassTabs,
                         config = liquidGlassConfig,
                         interactive = { true },
-                        actionItem = if (navLiveHidden) null else liveActionItem,
+                        actionItem = null,
                         onActionClick = openLive,
                     )
                 }
@@ -373,19 +358,6 @@ private fun MainContent() {
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 ) {
                     AppTab.entries.forEachIndexed { index, tab ->
-                        if (!navLiveHidden && index == NavMetrics.actionSlotFor(AppTab.entries.size)) {
-                            NavigationRailItem(
-                                selected = false,
-                                onClick = openLive,
-                                icon = {
-                                    Icon(
-                                        painterResource(liveActionItem.iconRes),
-                                        contentDescription = null,
-                                    )
-                                },
-                                label = { Text(liveActionItem.label) },
-                            )
-                        }
                         NavigationRailItem(
                             selected = pagerState.currentPage == index,
                             onClick = { selectTab(index) },
