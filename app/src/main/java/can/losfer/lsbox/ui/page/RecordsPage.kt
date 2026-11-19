@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -61,9 +63,16 @@ private sealed interface RecordsDialog {
     data class DeleteCollectItem(val item: VodCollect) : RecordsDialog
 }
 
+/**
+ * 观看记录 / 收藏页面。
+ *
+ * @param embedded 为 true 时（并入「追剧」页）不渲染自带标题栏与顶栏操作，
+ *                 只输出分段控件与列表，避免出现两条标题栏。
+ */
 @Composable
 fun RecordsPage(
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    embedded: Boolean = false,
 ) {
     val historyVm: HistoryViewModel = viewModel()
     val collectVm: CollectViewModel = viewModel()
@@ -130,6 +139,44 @@ fun RecordsPage(
         AppBootstrap.state.collect { boot ->
             if (boot is AppBootstrap.Boot.Ready) historyVm.resolveSourceNames()
         }
+    }
+
+    if (embedded) {
+        RecordsContentView(
+            topPad = 0.dp,
+            navStart = navStart,
+            navBottom = navBottom,
+            mode = mode,
+            onModeChange = { mode = it },
+            historyVm = historyVm,
+            collectVm = collectVm,
+            historyEdit = historyEdit,
+            historySelected = historySelected,
+            collectEdit = collectEdit,
+            collectSelected = collectSelected,
+            historyListState = historyListState,
+            collectListState = collectListState,
+            onDialog = { dialog = it },
+        )
+        RecordsDialogs(
+            dialog = dialog,
+            onDismiss = { dialog = null },
+            historyVm = historyVm,
+            collectVm = collectVm,
+            historySelected = historySelected,
+            collectSelected = collectSelected,
+            onDeleteSelectedHistory = {
+                val targets = historyItems.filter { HistoryViewModel.key(it) in historySelected }
+                historyVm.deleteSelected(targets)
+                exitEdit()
+            },
+            onDeleteSelectedCollect = {
+                val targets = collectItems.filter { it.id in collectSelected }
+                collectVm.deleteSelected(targets)
+                exitEdit()
+            },
+        )
+        return
     }
 
     AppTopBarScaffold(
@@ -203,133 +250,196 @@ fun RecordsPage(
             }
         },
     ) { topPad, _ ->
-        Column(modifier = Modifier.fillMaxSize()) {
-            CapsuleSegmentedButton(
-                options = listOf(
-                    SegmentOption(
-                        label = stringResource(R.string.history_title),
-                        value = RecordsMode.History,
-                        iconPainter = painterResource(R.drawable.ic_tab_history),
-                    ),
-                    SegmentOption(
-                        label = stringResource(R.string.common_collect),
-                        value = RecordsMode.Collect,
-                        iconPainter = painterResource(R.drawable.ic_tab_collect),
-                    ),
-                ),
-                selectedValue = mode,
-                onOptionSelected = { mode = it },
-                style = SegmentStyle.Track,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                pressMorph = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp + navStart, end = 16.dp, top = topPad + 8.dp),
-            )
-            AnimatedContent(
-                targetState = mode,
-                transitionSpec = {
-                    val toRight = targetState == RecordsMode.Collect
-                    (
-                        slideInHorizontally(spring(stiffness = Spring.StiffnessMedium)) { full ->
-                            if (toRight) full / 4 else -full / 4
-                        } + fadeIn(spring(stiffness = Spring.StiffnessMedium))
-                        ).togetherWith(
-                        slideOutHorizontally(spring(stiffness = Spring.StiffnessMedium)) { full ->
-                            if (toRight) -full / 4 else full / 4
-                        } + fadeOut(spring(stiffness = Spring.StiffnessMedium))
-                    )
-                },
-                label = "recordsSegment",
-            ) { m ->
-                when (m) {
-                    RecordsMode.History -> ProvideTmdbPosterLookup(historyVm) {
-                        HistoryTab(
-                            vm = historyVm,
-                            listState = historyListState,
-                            editMode = historyEdit,
-                            selected = historySelected,
-                            onToggleSelected = { historyVm.toggleSelected(it) },
-                            onRequestDelete = { dialog = RecordsDialog.DeleteHistoryItem(it) },
-                            navStart = navStart,
-                            navBottom = navBottom,
-                        )
-                    }
+        RecordsContentView(
+            topPad = topPad,
+            navStart = navStart,
+            navBottom = navBottom,
+            mode = mode,
+            onModeChange = { mode = it },
+            historyVm = historyVm,
+            collectVm = collectVm,
+            historyEdit = historyEdit,
+            historySelected = historySelected,
+            collectEdit = collectEdit,
+            collectSelected = collectSelected,
+            historyListState = historyListState,
+            collectListState = collectListState,
+            onDialog = { dialog = it },
+        )
+    }
 
-                    RecordsMode.Collect -> ProvideTmdbPosterLookup(collectVm) {
-                        CollectTab(
-                            vm = collectVm,
-                            listState = collectListState,
-                            editMode = collectEdit,
-                            selected = collectSelected,
-                            onToggleSelected = { collectVm.toggleSelected(it) },
-                            onRequestDelete = { dialog = RecordsDialog.DeleteCollectItem(it) },
-                            navStart = navStart,
-                            navBottom = navBottom,
-                        )
-                    }
+    RecordsDialogs(
+        dialog = dialog,
+        onDismiss = { dialog = null },
+        historyVm = historyVm,
+        collectVm = collectVm,
+        historySelected = historySelected,
+        collectSelected = collectSelected,
+        onDeleteSelectedHistory = {
+            val targets = historyItems.filter { HistoryViewModel.key(it) in historySelected }
+            historyVm.deleteSelected(targets)
+            exitEdit()
+        },
+        onDeleteSelectedCollect = {
+            val targets = collectItems.filter { it.id in collectSelected }
+            collectVm.deleteSelected(targets)
+            exitEdit()
+        },
+    )
+}
+
+/**
+ * 记录页正文（分段控件 + 历史/收藏列表），独立页与「追剧」内嵌共用。
+ */
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+private fun RecordsContentView(
+    topPad: Dp,
+    navStart: Dp,
+    navBottom: Dp,
+    mode: RecordsMode,
+    onModeChange: (RecordsMode) -> Unit,
+    historyVm: HistoryViewModel,
+    collectVm: CollectViewModel,
+    historyEdit: Boolean,
+    historySelected: Set<String>,
+    collectEdit: Boolean,
+    collectSelected: Set<Int>,
+    historyListState: LazyGridState,
+    collectListState: LazyGridState,
+    onDialog: (RecordsDialog) -> Unit,
+) {
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        CapsuleSegmentedButton(
+            options = listOf(
+                SegmentOption(
+                    label = stringResource(R.string.history_title),
+                    value = RecordsMode.History,
+                    iconPainter = painterResource(R.drawable.ic_tab_history),
+                ),
+                SegmentOption(
+                    label = stringResource(R.string.common_collect),
+                    value = RecordsMode.Collect,
+                    iconPainter = painterResource(R.drawable.ic_tab_collect),
+                ),
+            ),
+            selectedValue = mode,
+            onOptionSelected = { onModeChange(it) },
+            style = SegmentStyle.Track,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            pressMorph = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp + navStart, end = 16.dp, top = topPad + 8.dp),
+        )
+        AnimatedContent(
+            targetState = mode,
+            transitionSpec = {
+                val toRight = targetState == RecordsMode.Collect
+                (
+                    slideInHorizontally(spring(stiffness = Spring.StiffnessMedium)) { full ->
+                        if (toRight) full / 4 else -full / 4
+                    } + fadeIn(spring(stiffness = Spring.StiffnessMedium))
+                    ).togetherWith(
+                    slideOutHorizontally(spring(stiffness = Spring.StiffnessMedium)) { full ->
+                        if (toRight) -full / 4 else full / 4
+                    } + fadeOut(spring(stiffness = Spring.StiffnessMedium))
+                )
+            },
+            label = "recordsSegment",
+        ) { m ->
+            when (m) {
+                RecordsMode.History -> ProvideTmdbPosterLookup(historyVm) {
+                    HistoryTab(
+                        vm = historyVm,
+                        listState = historyListState,
+                        editMode = historyEdit,
+                        selected = historySelected,
+                        onToggleSelected = { historyVm.toggleSelected(it) },
+                        onRequestDelete = { onDialog(RecordsDialog.DeleteHistoryItem(it)) },
+                        navStart = navStart,
+                        navBottom = navBottom,
+                    )
+                }
+
+                RecordsMode.Collect -> ProvideTmdbPosterLookup(collectVm) {
+                    CollectTab(
+                        vm = collectVm,
+                        listState = collectListState,
+                        editMode = collectEdit,
+                        selected = collectSelected,
+                        onToggleSelected = { collectVm.toggleSelected(it) },
+                        onRequestDelete = { onDialog(RecordsDialog.DeleteCollectItem(it)) },
+                        navStart = navStart,
+                        navBottom = navBottom,
+                    )
                 }
             }
         }
     }
+}
 
+@Composable
+private fun RecordsDialogs(
+    dialog: RecordsDialog?,
+    onDismiss: () -> Unit,
+    historyVm: HistoryViewModel,
+    collectVm: CollectViewModel,
+    historySelected: Set<String>,
+    collectSelected: Set<Int>,
+    onDeleteSelectedHistory: () -> Unit,
+    onDeleteSelectedCollect: () -> Unit,
+) {
     when (val current = dialog) {
-        null -> Unit
+            null -> Unit
 
-        RecordsDialog.ClearHistory -> ConfirmDeleteDialog(
-            title = stringResource(R.string.history_clear),
-            text = stringResource(R.string.history_clear_message),
-            onConfirm = { historyVm.deleteAll() },
-            onDismiss = { dialog = null },
-        )
+            RecordsDialog.ClearHistory -> ConfirmDeleteDialog(
+                title = stringResource(R.string.history_clear),
+                text = stringResource(R.string.history_clear_message),
+                onConfirm = { historyVm.deleteAll() },
+                onDismiss = { onDismiss() },
+            )
 
-        RecordsDialog.ClearCollect -> ConfirmDeleteDialog(
-            title = stringResource(R.string.collect_clear),
-            text = stringResource(R.string.collect_clear_message),
-            onConfirm = { collectVm.deleteAll() },
-            onDismiss = { dialog = null },
-        )
+            RecordsDialog.ClearCollect -> ConfirmDeleteDialog(
+                title = stringResource(R.string.collect_clear),
+                text = stringResource(R.string.collect_clear_message),
+                onConfirm = { collectVm.deleteAll() },
+                onDismiss = { onDismiss() },
+            )
 
-        RecordsDialog.DeleteSelectedHistory -> ConfirmDeleteDialog(
-            title = stringResource(R.string.common_delete_selected),
-            text = stringResource(R.string.history_delete_selected_message, historySelected.size),
-            onConfirm = {
-                val targets = historyItems.filter { HistoryViewModel.key(it) in historySelected }
-                historyVm.deleteSelected(targets)
-                exitEdit()
-            },
-            onDismiss = { dialog = null },
-        )
+            RecordsDialog.DeleteSelectedHistory -> ConfirmDeleteDialog(
+                title = stringResource(R.string.common_delete_selected),
+                text = stringResource(R.string.history_delete_selected_message, historySelected.size),
+                onConfirm = { onDeleteSelectedHistory() },
+                onDismiss = { onDismiss() },
+            )
 
-        RecordsDialog.DeleteSelectedCollect -> ConfirmDeleteDialog(
-            title = stringResource(R.string.common_delete_selected),
-            text = stringResource(R.string.collect_delete_selected_message, collectSelected.size),
-            onConfirm = {
-                val targets = collectItems.filter { it.id in collectSelected }
-                collectVm.deleteSelected(targets)
-                exitEdit()
-            },
-            onDismiss = { dialog = null },
-        )
+            RecordsDialog.DeleteSelectedCollect -> ConfirmDeleteDialog(
+                title = stringResource(R.string.common_delete_selected),
+                text = stringResource(R.string.collect_delete_selected_message, collectSelected.size),
+                onConfirm = { onDeleteSelectedCollect() },
+                onDismiss = { onDismiss() },
+            )
 
-        is RecordsDialog.DeleteHistoryItem -> ConfirmDeleteDialog(
-            title = stringResource(R.string.history_delete_title),
-            text = stringResource(
-                R.string.history_delete_message,
-                current.item.name ?: stringResource(R.string.common_unnamed),
-            ),
-            onConfirm = { historyVm.deleteSelected(listOf(current.item)) },
-            onDismiss = { dialog = null },
-        )
+            is RecordsDialog.DeleteHistoryItem -> ConfirmDeleteDialog(
+                title = stringResource(R.string.history_delete_title),
+                text = stringResource(
+                    R.string.history_delete_message,
+                    current.item.name ?: stringResource(R.string.common_unnamed),
+                ),
+                onConfirm = { historyVm.deleteSelected(listOf(current.item)) },
+                onDismiss = { onDismiss() },
+            )
 
-        is RecordsDialog.DeleteCollectItem -> ConfirmDeleteDialog(
-            title = stringResource(R.string.detail_uncollect),
-            text = stringResource(
-                R.string.collect_uncollect_message,
-                current.item.name ?: stringResource(R.string.common_unnamed),
-            ),
-            onConfirm = { collectVm.deleteSelected(listOf(current.item)) },
-            onDismiss = { dialog = null },
-        )
+            is RecordsDialog.DeleteCollectItem -> ConfirmDeleteDialog(
+                title = stringResource(R.string.detail_uncollect),
+                text = stringResource(
+                    R.string.collect_uncollect_message,
+                    current.item.name ?: stringResource(R.string.common_unnamed),
+                ),
+                onConfirm = { collectVm.deleteSelected(listOf(current.item)) },
+                onDismiss = { onDismiss() },
+            )
     }
 }
