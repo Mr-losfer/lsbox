@@ -721,6 +721,12 @@
     <string name="ls_dl_send_queued">已加入下载队列</string>
     <string name="ls_dl_send_duplicate">该链接已在下载队列中</string>
     <string name="ls_dl_send_failed">提交失败：%1$s</string>
+    <string name="ls_dl_pick_title">选择要下载的集数</string>
+    <string name="ls_dl_pick_count">已选 %1$d / %2$d 集</string>
+    <string name="ls_dl_pick_confirm">开始下载</string>
+    <string name="ls_dl_pick_submitting">提交中…</string>
+    <string name="ls_dl_batch_result">已提交 %1$d 个下载任务，%2$d 个已存在</string>
+    <string name="ls_dl_batch_result_with_failure">已提交 %1$d 个，%2$d 个已存在，%3$d 个失败：%4$s</string>
     <string name="ls_dl_need_config">请先在设置中配置 LS 下载器</string>
     <string name="detail_download">下载</string>
     <string name="ls_dl_saved">配置已保存</string>
