@@ -723,4 +723,7 @@
     <string name="ls_dl_send_failed">提交失败：%1$s</string>
     <string name="ls_dl_need_config">请先在设置中配置 LS 下载器</string>
     <string name="detail_download">下载</string>
+    <string name="ls_dl_saved">配置已保存</string>
+    <string name="tab_category">分类</string>
+    <string name="mine_following_subtitle">每周追剧与观看记录</string>
 </resources>
