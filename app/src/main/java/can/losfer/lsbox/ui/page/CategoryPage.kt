@@ -24,8 +24,10 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -33,6 +35,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ContainedLoadingIndicator
@@ -55,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +71,6 @@ import can.losfer.lsbox.R
 import can.losfer.lsbox.bean.Movie
 import can.losfer.lsbox.bean.MovieSort
 import can.losfer.lsbox.ui.WindowSize
-import can.losfer.lsbox.ui.components.FilterSheet
 import can.losfer.lsbox.ui.components.ProvideTmdbPosterLookup
 import can.losfer.lsbox.ui.components.VodCard
 import can.losfer.lsbox.ui.components.VodCardMenu
@@ -79,9 +82,13 @@ import kotlinx.coroutines.flow.map
 
 private val CategoryHeaderHeight = 52.dp
 
+/** 「全部」在筛选 tabs 里的内部取值（空串表示不限制）。 */
+private const val FilterAllValue = ""
+
 /**
  * 分类页：顶部为一级分类（武侠 / 动作 / 喜剧…），
- * 二级为数据源提供的筛选条件（地区、年份、语言…），下方按筛选显示影片网格。
+ * 每个筛选维度（分类 / 地区 / 年份…）各占一行可左右滚动的 tabs，首项固定为「全部」，
+ * 下方按筛选结果显示影片网格。
  *
  * 顶栏右侧提供「追剧」快捷入口（navbar 之外的第二入口）。
  */
@@ -94,6 +101,10 @@ fun CategoryPage(
 ) {
     val navStart = contentPadding.calculateStartPadding(LocalLayoutDirection.current)
     val navBottom = contentPadding.calculateBottomPadding()
+    // 顶栏是自绘的，需自行让出状态栏，否则标题会顶到通知栏下面
+    val statusTop = with(LocalDensity.current) {
+        WindowInsets.statusBarsIgnoringVisibility.getTop(this).toDp()
+    }
     val context = LocalContext.current
 
     val sorts by homeViewModel.allSorts.collectAsState()
@@ -105,7 +116,6 @@ fun CategoryPage(
     )
 
     var selectedSortId by rememberSaveable { mutableStateOf<String?>(null) }
-    var filterOpen by remember { mutableStateOf(false) }
     // 当前选中的一级分类（含其筛选条件）
     val currentSort = remember(sorts, selectedSortId) {
         sorts.firstOrNull { it.id == selectedSortId }
@@ -131,7 +141,7 @@ fun CategoryPage(
     Column(modifier = Modifier.fillMaxSize()) {
         // 顶栏：标题 + 追剧快捷入口
         CategoryTopBar(
-            topPad = 0.dp,
+            topPad = statusTop,
             navStart = navStart,
             onOpenFollowing = onOpenFollowing,
         )
@@ -161,14 +171,19 @@ fun CategoryPage(
             }
         }
 
-        // 筛选条：分类 / 地区 / 年份 等，来自数据源 sort.filters
+        // 筛选 tabs：每个维度一行（分类 / 地区 / 年份…），首项固定「全部」，可左右滚动
         val filters = currentSort?.filters.orEmpty()
+        val selection = currentSort?.filterSelect.orEmpty()
         if (filters.isNotEmpty()) {
-            FilterChipRow(
+            FilterTabRows(
                 filters = filters,
-                selection = currentSort?.filterSelect.orEmpty(),
+                selection = selection,
                 navStart = navStart,
-                onOpenSheet = { filterOpen = true },
+                onSelect = { key, value ->
+                    val next = HashMap(selection)
+                    if (value.isBlank()) next.remove(key) else next[key] = value
+                    vm.applyFilter(next)
+                },
             )
         }
 
@@ -210,19 +225,6 @@ fun CategoryPage(
     }
 
     VodCardMenu(vodMenu) { context.jumpToSearch(it) }
-
-    if (filterOpen) {
-        currentSort?.let { sort ->
-            FilterSheet(
-                sort = sort,
-                onDismiss = { filterOpen = false },
-                onConfirm = { selection ->
-                    filterOpen = false
-                    vm.applyFilter(selection)
-                },
-            )
-        }
-    }
 }
 
 @Composable
@@ -296,81 +298,103 @@ private fun CategoryPrimaryChip(label: String, selected: Boolean, onClick: () ->
 }
 
 /**
- * 筛选条：把每个筛选维度压缩成一行胶囊入口，点击弹出完整筛选面板。
+ * 筛选 tabs：每个筛选维度独占一行，行内横向滚动，首项固定「全部」。
  */
 @Composable
-private fun FilterChipRow(
+private fun FilterTabRows(
     filters: List<MovieSort.SortFilter>,
     selection: Map<String, String>,
     navStart: Dp,
-    onOpenSheet: () -> Unit,
+    onSelect: (key: String, value: String) -> Unit,
 ) {
-    LazyRow(
-        contentPadding = PaddingValues(start = 16.dp + navStart, end = 16.dp, bottom = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(filters, key = { it.key.orEmpty() }) { filter ->
+    Column(modifier = Modifier.fillMaxWidth()) {
+        filters.forEach { filter ->
             val key = filter.key.orEmpty()
-            val selectedValue = selection[key]
-            val selectedLabel = filter.values?.get(selectedValue.orEmpty())
-            val active = !selectedLabel.isNullOrBlank()
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = if (active) {
-                    MaterialTheme.colorScheme.primaryContainer
-                } else {
-                    MaterialTheme.colorScheme.surfaceContainer
+            val values = filter.values.orEmpty()
+            if (values.isEmpty()) return@forEach
+            val selected = selection[key].orEmpty()
+            FilterScrollRow(
+                entries = buildList {
+                    add(FilterAllValue to stringResource(R.string.common_all))
+                    values.forEach { (value, label) ->
+                        // 数据源有时会把「全部」自己加进 values，去掉避免重复
+                        if (value.isNotBlank()) add(value to label)
+                    }
                 },
-                modifier = Modifier.clickable(onClick = onOpenSheet),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                ) {
-                    Text(
-                        text = selectedLabel ?: filter.name.orEmpty(),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = if (active) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_down),
-                        contentDescription = null,
-                        tint = if (active) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .size(16.dp),
-                    )
-                }
-            }
-        }
-        item(key = "more_filters") {
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                modifier = Modifier.clickable(onClick = onOpenSheet),
-            ) {
-                Text(
-                    text = stringResource(R.string.common_filter),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                )
-            }
+                selectedValue = selected,
+                navStart = navStart,
+                onSelect = { onSelect(key, it) },
+            )
         }
     }
 }
 
 @Composable
+private fun FilterScrollRow(
+    entries: List<Pair<String, String>>,
+    selectedValue: String,
+    navStart: Dp,
+    onSelect: (String) -> Unit,
+) {
+    val listState = rememberLazyListState()
+    // 让当前选中项尽量留在可视区（切换分类后取值会重置）
+    LaunchedEffect(entries, selectedValue) {
+        val index = entries.indexOfFirst { it.first == selectedValue }
+        if (index >= 0) listState.animateScrollToItem(index)
+    }
+    LazyRow(
+        state = listState,
+        contentPadding = PaddingValues(start = 16.dp + navStart, end = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+    ) {
+        items(entries, key = { it.first.ifEmpty { "__all__" } }) { (value, label) ->
+            FilterTab(
+                label = label,
+                selected = value == selectedValue,
+                onClick = { if (value != selectedValue) onSelect(value) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterTab(label: String, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(14.dp),
+        color = if (selected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        },
+        modifier = Modifier
+            .height(32.dp)
+            .clickable(onClick = onClick),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.padding(horizontal = 14.dp),
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                color = if (selected) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+@Composable
+
 private fun CategoryGrid(
     videos: List<Movie.Video>,
     onsCardClick: (Movie.Video) -> Unit,
