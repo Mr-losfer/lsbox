@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -85,10 +86,29 @@ internal fun DetailContent(
     // LS 下载器开启且配置完整时才显示下载按钮
     val lsDownloader = LsDownloaderState.config
     val downloadEnabled = lsDownloader.enabled && lsDownloader.apiKey.isNotBlank()
-    fun submitDownload() {
-        val episode = episodes.getOrNull(playIndex) ?: episodes.firstOrNull()
-        val url = episode?.url.orEmpty()
-        if (url.isBlank()) {
+    // 下载流程：点按钮 → 选集弹窗 → 确认后把各集原始链接逐条提交到 LS 下载器
+    var downloadPickOpen by rememberSaveable { mutableStateOf(false) }
+    var downloadBusy by remember { mutableStateOf(false) }
+
+    /** 单集任务标题：影片名 + 集名。 */
+    fun downloadTitleFor(index: Int): String? {
+        val episode = episodes.getOrNull(index) ?: return null
+        val rawName = episode.name?.trim().orEmpty()
+        val movieName = info.name?.trim().orEmpty()
+        return when {
+            rawName.isBlank() -> movieName.ifBlank { null }
+            movieName.isBlank() -> rawName
+            else -> "$movieName $rawName"
+        }
+    }
+
+    fun submitDownloads(indexes: List<Int>) {
+        val urls = indexes.mapNotNull { index ->
+            val url = episodes.getOrNull(index)?.url?.trim().orEmpty()
+            if (url.isEmpty()) null else index to url
+        }
+        if (urls.isEmpty()) {
+            downloadPickOpen = false
             Toast.makeText(
                 context,
                 context.getString(R.string.detail_no_playable_content),
@@ -96,28 +116,38 @@ internal fun DetailContent(
             ).show()
             return
         }
-        val rawName = episode?.name?.trim().orEmpty()
-        val movieName = info.name?.trim().orEmpty()
-        val title = when {
-            rawName.isBlank() -> movieName.ifBlank { null }
-            movieName.isBlank() -> rawName
-            else -> "$movieName $rawName"
-        }
+        downloadBusy = true
         scope.launch {
-            val result = withContext(Dispatchers.IO) {
-                runCatching { LsDownloaderApi.createTask(url, title) }
+            val (okCount, duplicateCount, failures) = withContext(Dispatchers.IO) {
+                var ok = 0
+                var duplicate = 0
+                val errors = mutableListOf<String>()
+                for ((index, url) in urls) {
+                    runCatching { LsDownloaderApi.createTask(url, downloadTitleFor(index)) }
+                        .onSuccess { ok++ }
+                        .onFailure { e ->
+                            if ((e as? LsDownloaderException)?.duplicate == true) {
+                                duplicate++
+                            } else {
+                                errors.add(e.message.orEmpty())
+                            }
+                        }
+                }
+                Triple(ok, duplicate, errors)
             }
-            val message = result.fold(
-                onSuccess = { context.getString(R.string.ls_dl_send_queued) },
-                onFailure = { e ->
-                    val apiError = e as? LsDownloaderException
-                    if (apiError?.duplicate == true) {
-                        context.getString(R.string.ls_dl_send_duplicate)
-                    } else {
-                        context.getString(R.string.ls_dl_send_failed, e.message.orEmpty())
-                    }
-                },
-            )
+            downloadBusy = false
+            downloadPickOpen = false
+            val message = when {
+                failures.isNotEmpty() -> context.getString(
+                    R.string.ls_dl_batch_result_with_failure,
+                    okCount,
+                    duplicateCount,
+                    failures.size,
+                    failures.first().orEmpty(),
+                )
+
+                else -> context.getString(R.string.ls_dl_batch_result, okCount, duplicateCount)
+            }
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
         }
     }
@@ -148,7 +178,7 @@ internal fun DetailContent(
                 onCollect = { vm.toggleCollect() },
                 onFollow = { followScheduleOpen = true },
                 onCopyEpisodes = { episodePickOpen = true },
-                onDownload = if (downloadEnabled) ({ submitDownload() }) else null,
+                onDownload = if (downloadEnabled) ({ downloadPickOpen = true }) else null,
                 vm = vm,
                 rollPaused = heroRollPaused,
             )
@@ -220,6 +250,12 @@ internal fun DetailContent(
         item(key = "tmdb_genres") {
             TmdbGenreSection(vm, info.name, info.en, info.year)
         }
+
+        item(key = "recommend") {
+            // 用当前影片的一级分类推荐同类影片，放在页面最下方
+            LaunchedEffect(info.tid, info.sourceKey, vm.vodId) { vm.loadRecommend() }
+            DetailRecommendSection(vm)
+        }
     }
 
     if (episodePickOpen) {
@@ -238,6 +274,16 @@ internal fun DetailContent(
             episodes = episodes,
             selectedIndexes = picked,
             onDismiss = { exportIndexes = null },
+        )
+    }
+
+    if (downloadPickOpen) {
+        DownloadPickSheet(
+            episodes = episodes,
+            initialIndex = playIndex,
+            busy = downloadBusy,
+            onDismiss = { downloadPickOpen = false },
+            onConfirm = { submitDownloads(it) },
         )
     }
 
