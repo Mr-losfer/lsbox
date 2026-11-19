@@ -684,4 +684,7 @@
     <string name="ls_dl_send_failed">Қосу сәтсіз: %1$s</string>
     <string name="ls_dl_need_config">Алдымен реттеулерде LS жүктеушісін баптаңыз</string>
     <string name="detail_download">Жүктеу</string>
+    <string name="ls_dl_saved">Баптау сақталды</string>
+    <string name="tab_category">Санаттар</string>
+    <string name="mine_following_subtitle">Апталық бақылау және тарих</string>
 </resources>
