@@ -66,6 +66,7 @@ import androidx.lifecycle.compose.rememberLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import can.losfer.lsbox.R
 import can.losfer.lsbox.server.ControlManager
+import can.losfer.lsbox.ui.FollowingActivity
 import can.losfer.lsbox.ui.LivePlayActivity
 import can.losfer.lsbox.ui.components.AVBoxAlertDialog
 import can.losfer.lsbox.ui.components.LocalTopBarGlassPauseRecording
@@ -90,9 +91,11 @@ import kotlinx.coroutines.launch
 private enum class AppTab(@StringRes val labelRes: Int, @DrawableRes val icon: Int) {
     HOME(R.string.tab_home, R.drawable.ic_tab_home),
 
-    // 原「记录」页已并入「追剧」，第二个 Tab 改为分类筛选
+    // 第二个 Tab 为分类筛选页
     CATEGORY(R.string.tab_category, R.drawable.ic_tab_category),
-    FOLLOWING(R.string.tab_following, R.drawable.ic_tab_following),
+
+    // 第四个 Tab 为观看记录（历史 / 收藏），「追剧」改为从「我的」页进入
+    RECORDS(R.string.tab_records, R.drawable.ic_tab_history),
     SETTINGS(R.string.tab_mine, R.drawable.ic_tab_mine),
 }
 
@@ -237,6 +240,10 @@ private fun MainContent() {
     val openLive: () -> Unit = remember(context) {
         { context.startActivity(Intent(context, LivePlayActivity::class.java)) }
     }
+    // 「追剧」已不在 TabBar 上，从「我的」页 / 分类页顶栏以独立页面进入
+    val openFollowing: () -> Unit = remember(context) {
+        { context.startActivity(Intent(context, FollowingActivity::class.java)) }
+    }
     CompositionLocalProvider(
         LocalSheetHost provides sheetHost,
         LocalTopBarGlassPauseRecording provides pauseTopBarRecording,
@@ -304,16 +311,12 @@ private fun MainContent() {
                                 AppTab.CATEGORY -> CategoryPage(
                                     homeViewModel = homeViewModel,
                                     contentPadding = pageContentPadding,
-                                    onOpenFollowing = {
-                                        selectTab(AppTab.entries.indexOf(AppTab.FOLLOWING))
-                                    },
+                                    onOpenFollowing = openFollowing,
                                 )
-                                AppTab.FOLLOWING -> FollowingPage(contentPadding = pageContentPadding)
+                                AppTab.RECORDS -> RecordsPage(contentPadding = pageContentPadding)
                                 AppTab.SETTINGS -> SettingsPage(
                                     contentPadding = pageContentPadding,
-                                    onOpenFollowing = {
-                                        selectTab(AppTab.entries.indexOf(AppTab.FOLLOWING))
-                                    },
+                                    onOpenFollowing = openFollowing,
                                 )
                             }
                         }
