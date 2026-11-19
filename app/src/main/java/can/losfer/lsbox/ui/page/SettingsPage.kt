@@ -137,6 +137,8 @@ class SettingsViewModel : ViewModel() {
 fun SettingsPage(
     vm: SettingsViewModel = viewModel(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    /** 点击「追剧」时由 MainScreen 切换 Tab */
+    onOpenFollowing: () -> Unit = {},
 ) {
     val navStart = contentPadding.calculateStartPadding(LocalLayoutDirection.current)
     val navBottom = contentPadding.calculateBottomPadding()
@@ -178,6 +180,7 @@ fun SettingsPage(
             val rows = buildList {
                 add(MineRow.Kind.Subscribe)
                 add(MineRow.Kind.Live)
+                add(MineRow.Kind.Following)
                 if (lsDownloader.enabled) {
                     add(MineRow.Kind.LsDownloader)
                     add(MineRow.Kind.DownloadList)
@@ -211,6 +214,13 @@ fun SettingsPage(
                                         Intent(context, LivePlayActivity::class.java),
                                     )
                                 },
+                            )
+
+                            MineRow.Kind.Following -> SettingsRow(
+                                title = stringResource(R.string.tab_following),
+                                subtitle = stringResource(R.string.mine_following_subtitle),
+                                iconRes = R.drawable.ic_tab_following,
+                                onClick = onOpenFollowing,
                             )
 
                             MineRow.Kind.LsDownloader -> SettingsRow(
@@ -269,7 +279,7 @@ fun SettingsPage(
 
 /** 「我的」页的行类型，用于按开关状态动态拼接卡片。 */
 private object MineRow {
-    enum class Kind { Subscribe, Live, LsDownloader, DownloadList, Settings }
+    enum class Kind { Subscribe, Live, Following, LsDownloader, DownloadList, Settings }
 }
 
 private const val AboutSheetHeightFraction = 0.6f
