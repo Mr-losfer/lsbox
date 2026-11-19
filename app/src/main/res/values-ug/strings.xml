@@ -684,4 +684,7 @@
     <string name="ls_dl_send_failed">قوشۇش مەغلۇپ بولدى: %1$s</string>
     <string name="ls_dl_need_config">ئاۋۋال تەڭشەكتە LS چۈشۈرگۈچنى تەڭشەڭ</string>
     <string name="detail_download">چۈشۈرۈش</string>
+    <string name="ls_dl_saved">تەڭشەك ساقلاندى</string>
+    <string name="tab_category">تۈرلەر</string>
+    <string name="mine_following_subtitle">ھەپتىلىك كۆرۈش ۋە خاتىرە</string>
 </resources>
