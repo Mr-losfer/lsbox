@@ -16,8 +16,8 @@ android {
         applicationId = "can.losfer.lsbox"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 43
-        versionName = "1.8.0"
+        versionCode = 44
+        versionName = "1.9.0"
         multiDexEnabled = true
         ndk {
             abiFilters += setOf("arm64-v8a")
