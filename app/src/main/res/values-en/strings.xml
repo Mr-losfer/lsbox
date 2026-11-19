@@ -721,6 +721,12 @@
     <string name="ls_dl_send_queued">Added to download queue</string>
     <string name="ls_dl_send_duplicate">This link is already in the queue</string>
     <string name="ls_dl_send_failed">Failed to submit: %1$s</string>
+    <string name="ls_dl_pick_title">Select episodes to download</string>
+    <string name="ls_dl_pick_count">%1$d of %2$d selected</string>
+    <string name="ls_dl_pick_confirm">Start download</string>
+    <string name="ls_dl_pick_submitting">Submitting…</string>
+    <string name="ls_dl_batch_result">%1$d task(s) submitted, %2$d already queued</string>
+    <string name="ls_dl_batch_result_with_failure">%1$d submitted, %2$d already queued, %3$d failed: %4$s</string>
     <string name="ls_dl_need_config">Configure LS Downloader in Settings first</string>
     <string name="detail_download">Download</string>
     <string name="ls_dl_saved">Configuration saved</string>
