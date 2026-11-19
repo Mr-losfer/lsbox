@@ -723,4 +723,7 @@
     <string name="ls_dl_send_failed">Failed to submit: %1$s</string>
     <string name="ls_dl_need_config">Configure LS Downloader in Settings first</string>
     <string name="detail_download">Download</string>
+    <string name="ls_dl_saved">Configuration saved</string>
+    <string name="tab_category">Categories</string>
+    <string name="mine_following_subtitle">Weekly tracking and history</string>
 </resources>
