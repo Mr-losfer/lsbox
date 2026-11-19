@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import android.widget.Toast
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -59,6 +60,7 @@ fun LsDownloaderScreen(onNavigateBack: () -> Unit) {
     var conn by remember { mutableStateOf<ConnState>(ConnState.Idle) }
     val scope = rememberCoroutineScope()
     val listState = rememberScrollState()
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     fun save() {
         LsDownloaderState.baseUrl = baseUrl
@@ -156,8 +158,15 @@ fun LsDownloaderScreen(onNavigateBack: () -> Unit) {
                     SettingsRow(
                         title = stringResource(R.string.ls_dl_save),
                         subtitle = stringResource(R.string.ls_dl_save_subtitle),
-                        iconRes = R.drawable.ic_delete,
-                        onClick = { save() },
+                        iconRes = R.drawable.ic_ls_save,
+                        onClick = {
+                            save()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.ls_dl_saved),
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        },
                     )
                 }
             }
