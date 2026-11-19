@@ -89,7 +89,9 @@ import kotlinx.coroutines.launch
 
 private enum class AppTab(@StringRes val labelRes: Int, @DrawableRes val icon: Int) {
     HOME(R.string.tab_home, R.drawable.ic_tab_home),
-    RECORDS(R.string.tab_records, R.drawable.ic_tab_records),
+
+    // 原「记录」页已并入「追剧」，第二个 Tab 改为分类筛选
+    CATEGORY(R.string.tab_category, R.drawable.ic_tab_category),
     FOLLOWING(R.string.tab_following, R.drawable.ic_tab_following),
     SETTINGS(R.string.tab_mine, R.drawable.ic_tab_mine),
 }
@@ -299,9 +301,20 @@ private fun MainContent() {
                         CompositionLocalProvider(LocalLifecycleOwner provides pageLifecycleOwner) {
                             when (AppTab.entries[page]) {
                                 AppTab.HOME -> HomePage(homeViewModel, pageContentPadding)
-                                AppTab.RECORDS -> RecordsPage(contentPadding = pageContentPadding)
+                                AppTab.CATEGORY -> CategoryPage(
+                                    homeViewModel = homeViewModel,
+                                    contentPadding = pageContentPadding,
+                                    onOpenFollowing = {
+                                        selectTab(AppTab.entries.indexOf(AppTab.FOLLOWING))
+                                    },
+                                )
                                 AppTab.FOLLOWING -> FollowingPage(contentPadding = pageContentPadding)
-                                AppTab.SETTINGS -> SettingsPage(contentPadding = pageContentPadding)
+                                AppTab.SETTINGS -> SettingsPage(
+                                    contentPadding = pageContentPadding,
+                                    onOpenFollowing = {
+                                        selectTab(AppTab.entries.indexOf(AppTab.FOLLOWING))
+                                    },
+                                )
                             }
                         }
                     }
