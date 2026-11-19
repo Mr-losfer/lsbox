@@ -126,6 +126,21 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
     fun seasonHintFor(name: String?, flag: String?): Int? =
         TmdbApi.parseSeasonHint(name) ?: TmdbApi.parseSeasonHint(flag)
 
+    private val _recommendCategory = MutableStateFlow<Pair<Int, String>?>(null)
+    /** 详情页「推荐影片」用的分类（tid + 来源 key）；null 表示暂无推荐。 */
+    val recommendCategory: StateFlow<Pair<Int, String>?> = _recommendCategory.asStateFlow()
+    private var recommendKey: List<Any>? = null
+
+    /** 用当前影片的一级分类作为推荐依据；失败或拿不到分类时静默关闭推荐。 */
+    fun loadRecommend() {
+        val info = _vodUi.value?.info ?: return
+        val tid = info.tid
+        val key = listOf(vodId, tid, sourceKey)
+        if (recommendKey == key) return
+        recommendKey = key
+        _recommendCategory.value = if (tid > 0 && sourceKey.isNotBlank()) tid to sourceKey else null
+    }
+
     fun ensureTmdbDetail(name: String?, altName: String?, year: Int) {
         if (TmdbTitleFilter.shouldSkipTmdb(name, altName)) {
             _tmdbDetail.value = null
