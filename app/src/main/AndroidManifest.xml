@@ -108,6 +108,8 @@
         <activity
             android:name=".ui.SettingsDetailActivity" />
         <activity
+            android:name=".ui.FollowingActivity" />
+        <activity
             android:name=".ui.LsDownloaderActivity" />
         <activity
             android:name=".ui.DownloadListActivity" />
