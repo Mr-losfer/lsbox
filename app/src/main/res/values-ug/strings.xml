@@ -682,6 +682,12 @@
     <string name="ls_dl_send_queued">چۈشۈرۈش ئۆچىرىتىگە قوشۇلدى</string>
     <string name="ls_dl_send_duplicate">بۇ ئۇلانما ئاللىبۇرۇن تىزىملىكتە بار</string>
     <string name="ls_dl_send_failed">قوشۇش مەغلۇپ بولدى: %1$s</string>
+    <string name="ls_dl_pick_title">چۈشۈرىدىغان قىسىمنى تاللاڭ</string>
+    <string name="ls_dl_pick_count">%1$d / %2$d قىسىم تاللاندى</string>
+    <string name="ls_dl_pick_confirm">چۈشۈرۈشنى باشلاش</string>
+    <string name="ls_dl_pick_submitting">قوشۇلۇۋاتىدۇ…</string>
+    <string name="ls_dl_batch_result">%1$d ۋەزىپە قوشۇلدى، %2$d نەچچىسى ئاللىبۇرۇن بار</string>
+    <string name="ls_dl_batch_result_with_failure">%1$d قوشۇلدى، %2$d ئاللىبۇرۇن بار، %3$d مەغلۇپ بولدى: %4$s</string>
     <string name="ls_dl_need_config">ئاۋۋال تەڭشەكتە LS چۈشۈرگۈچنى تەڭشەڭ</string>
     <string name="detail_download">چۈشۈرۈش</string>
     <string name="ls_dl_saved">تەڭشەك ساقلاندى</string>
