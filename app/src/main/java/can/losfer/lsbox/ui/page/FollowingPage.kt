@@ -64,6 +64,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun FollowingPage(
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    /** 作为独立页面打开时显示返回按钮；为 null 表示由 TabBar 承载 */
+    onNavigateBack: (() -> Unit)? = null,
 ) {
     val vm: FollowingViewModel = viewModel()
     val context = LocalContext.current
@@ -94,6 +96,15 @@ fun FollowingPage(
 
     AppTopBarScaffold(
         topBarStartInset = navStart,
+        navigationIcon = onNavigateBack?.let { back ->
+            {
+                ManageActionIcon(
+                    iconRes = R.drawable.ic_arrow_left,
+                    contentDescription = stringResource(R.string.common_back),
+                    onClick = back,
+                )
+            }
+        },
         titleContent = {
             Text(
                 text = stringResource(R.string.tab_following),
