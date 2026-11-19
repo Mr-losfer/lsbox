@@ -1,0 +1,426 @@
+@file:OptIn(
+    androidx.compose.material3.ExperimentalMaterial3Api::class,
+    androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class,
+)
+
+package can.losfer.lsbox.ui.page
+
+import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import can.losfer.lsbox.R
+import can.losfer.lsbox.bean.Movie
+import can.losfer.lsbox.bean.MovieSort
+import can.losfer.lsbox.ui.WindowSize
+import can.losfer.lsbox.ui.components.FilterSheet
+import can.losfer.lsbox.ui.components.ProvideTmdbPosterLookup
+import can.losfer.lsbox.ui.components.VodCard
+import can.losfer.lsbox.ui.components.VodCardMenu
+import can.losfer.lsbox.ui.components.VodCardStyle
+import can.losfer.lsbox.ui.components.glassTopBarSurface
+import can.losfer.lsbox.ui.components.rememberVodCardMenuState
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+
+private val CategoryHeaderHeight = 52.dp
+
+/**
+ * 分类页：顶部为一级分类（武侠 / 动作 / 喜剧…），
+ * 二级为数据源提供的筛选条件（地区、年份、语言…），下方按筛选显示影片网格。
+ *
+ * 顶栏右侧提供「追剧」快捷入口（navbar 之外的第二入口）。
+ */
+@Composable
+fun CategoryPage(
+    homeViewModel: HomeViewModel,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    /** 顶栏「追剧」快捷入口：由 MainScreen 直接切换 Tab，避免重启 Activity */
+    onOpenFollowing: () -> Unit = {},
+) {
+    val navStart = contentPadding.calculateStartPadding(LocalLayoutDirection.current)
+    val navBottom = contentPadding.calculateBottomPadding()
+    val context = LocalContext.current
+
+    val sorts by homeViewModel.allSorts.collectAsState()
+    val vm: PartitionListViewModel = viewModelForCategory()
+    val ui by vm.ui.collectAsState()
+    val vodMenu = rememberVodCardMenuState(
+        lookupCollected = vm::isVideoCollected,
+        onCollectToggle = vm::toggleVideoCollect,
+    )
+
+    var selectedSortId by rememberSaveable { mutableStateOf<String?>(null) }
+    var filterOpen by remember { mutableStateOf(false) }
+    // 当前选中的一级分类（含其筛选条件）
+    val currentSort = remember(sorts, selectedSortId) {
+        sorts.firstOrNull { it.id == selectedSortId }
+    }
+
+    // 首次拿到分类列表时自动选中第一项
+    LaunchedEffect(sorts) {
+        if (sorts.isEmpty()) return@LaunchedEffect
+        val currentId = selectedSortId
+        if (currentId == null || sorts.none { it.id == currentId }) {
+            val first = sorts.first()
+            selectedSortId = first.id
+            vm.open(first, null, first.name ?: "")
+        }
+    }
+
+    LaunchedEffect(vm) {
+        vm.actionMessages.collect { msg ->
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // 顶栏：标题 + 追剧快捷入口
+        CategoryTopBar(
+            topPad = 0.dp,
+            navStart = navStart,
+            onOpenFollowing = onOpenFollowing,
+        )
+
+        if (sorts.isNotEmpty()) {
+            LazyRow(
+                contentPadding = PaddingValues(
+                    start = 16.dp + navStart,
+                    end = 16.dp,
+                    top = 4.dp,
+                    bottom = 8.dp,
+                ),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(sorts, key = { it.id ?: it.name.orEmpty() }) { sort ->
+                    CategoryPrimaryChip(
+                        label = sort.name.orEmpty(),
+                        selected = sort.id == selectedSortId,
+                        onClick = {
+                            if (sort.id != selectedSortId) {
+                                selectedSortId = sort.id
+                                vm.open(sort, null, sort.name ?: "")
+                            }
+                        },
+                    )
+                }
+            }
+        }
+
+        // 筛选条：分类 / 地区 / 年份 等，来自数据源 sort.filters
+        val filters = currentSort?.filters.orEmpty()
+        if (filters.isNotEmpty()) {
+            FilterChipRow(
+                filters = filters,
+                selection = currentSort?.filterSelect.orEmpty(),
+                navStart = navStart,
+                onOpenSheet = { filterOpen = true },
+            )
+        }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            when (ui.state) {
+                PartitionListViewModel.State.Loading -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    ContainedLoadingIndicator(Modifier.size(56.dp))
+                }
+
+                PartitionListViewModel.State.Empty -> Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = stringResource(R.string.common_empty_content),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                PartitionListViewModel.State.Ready -> ProvideTmdbPosterLookup(vm) {
+                    CategoryGrid(
+                        videos = ui.videos,
+                        onsCardClick = { video ->
+                            context.dispatchVodCardClick(video, onAction = { vm.runAction(it) })
+                        },
+                        onCardLongClick = { video -> vodMenu.show(video) },
+                        onLoadMore = { vm.loadMore() },
+                        navStart = navStart,
+                        navBottom = navBottom,
+                        resetKey = selectedSortId,
+                    )
+                }
+            }
+        }
+    }
+
+    VodCardMenu(vodMenu) { context.jumpToSearch(it) }
+
+    if (filterOpen) {
+        currentSort?.let { sort ->
+            FilterSheet(
+                sort = sort,
+                onDismiss = { filterOpen = false },
+                onConfirm = { selection ->
+                    filterOpen = false
+                    vm.applyFilter(selection)
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun viewModelForCategory(): PartitionListViewModel {
+    val owner = LocalViewModelStoreOwner.current
+    return remember(owner) {
+        ViewModelProvider(owner!!)[PartitionListViewModel::class.java]
+    }
+}
+
+@Composable
+private fun CategoryTopBar(
+    topPad: Dp,
+    navStart: Dp,
+    onOpenFollowing: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp + navStart, end = 12.dp, top = topPad + 8.dp)
+            .height(CategoryHeaderHeight),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.tab_category),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f),
+        )
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .glassTopBarSurface(CircleShape, MaterialTheme.colorScheme.surfaceBright)
+                .clickable(onClick = onOpenFollowing),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_tab_following),
+                contentDescription = stringResource(R.string.tab_following),
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(22.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun CategoryPrimaryChip(label: String, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(18.dp),
+        color = if (selected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        },
+        modifier = Modifier.clickable(onClick = onClick),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+            color = if (selected) {
+                MaterialTheme.colorScheme.onPrimary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            },
+            maxLines = 1,
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+        )
+    }
+}
+
+/**
+ * 筛选条：把每个筛选维度压缩成一行胶囊入口，点击弹出完整筛选面板。
+ */
+@Composable
+private fun FilterChipRow(
+    filters: List<MovieSort.SortFilter>,
+    selection: Map<String, String>,
+    navStart: Dp,
+    onOpenSheet: () -> Unit,
+) {
+    LazyRow(
+        contentPadding = PaddingValues(start = 16.dp + navStart, end = 16.dp, bottom = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(filters, key = { it.key.orEmpty() }) { filter ->
+            val key = filter.key.orEmpty()
+            val selectedValue = selection[key]
+            val selectedLabel = filter.values?.get(selectedValue.orEmpty())
+            val active = !selectedLabel.isNullOrBlank()
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = if (active) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainer
+                },
+                modifier = Modifier.clickable(onClick = onOpenSheet),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                ) {
+                    Text(
+                        text = selectedLabel ?: filter.name.orEmpty(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = if (active) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_down),
+                        contentDescription = null,
+                        tint = if (active) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(16.dp),
+                    )
+                }
+            }
+        }
+        item(key = "more_filters") {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                modifier = Modifier.clickable(onClick = onOpenSheet),
+            ) {
+                Text(
+                    text = stringResource(R.string.common_filter),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CategoryGrid(
+    videos: List<Movie.Video>,
+    onsCardClick: (Movie.Video) -> Unit,
+    onCardLongClick: (Movie.Video) -> Unit,
+    onLoadMore: () -> Unit,
+    navStart: Dp,
+    navBottom: Dp,
+    resetKey: Any?,
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val columns = WindowSize.gridColumns(
+            availableWidthDp = (maxWidth - 32.dp - navStart).value.toInt(),
+            minColumns = 3,
+        )
+        val gridState = rememberLazyGridState()
+        LaunchedEffect(resetKey) { gridState.scrollToItem(0) }
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            state = gridState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = 16.dp + navStart,
+                end = 16.dp,
+                top = 8.dp,
+                bottom = 8.dp + navBottom,
+            ),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            itemsIndexed(videos, key = { i, v -> "${i}_${v.sourceKey}_${v.id}" }) { _, video ->
+                VodCard(
+                    video = video,
+                    onClick = { onsCardClick(video) },
+                    onLongClick = { onCardLongClick(video) },
+                    style = VodCardStyle.Stacked,
+                )
+            }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                LaunchedEffect(videos.size) { onLoadMore() }
+            }
+        }
+
+        LaunchedEffect(gridState, videos.size) {
+            snapshotFlow { gridState.layoutInfo }
+                .first { info ->
+                    val last = info.visibleItemsInfo.lastOrNull()?.index ?: return@first false
+                    shouldPrefetchNextPage(last, info.totalItemsCount, columns)
+                }
+            onLoadMore()
+        }
+    }
+}
