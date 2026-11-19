@@ -91,6 +91,9 @@ object TmdbPoster {
     private fun isActive(): Boolean = TmdbImages.isActive()
 
     internal fun nameCandidates(name: String?, altName: String?): List<String> {
+        // 维吾尔语影片在 TMDB 上基本无条目，直接返回空候选，
+        // 避免进入搜索链路产生空命中、请求堆积与后续异常
+        if (TmdbTitleFilter.shouldSkipTmdb(name, altName)) return emptyList()
         val primary = name.orEmpty().trim()
         val alt = altName.orEmpty().trim()
         return when {
@@ -578,13 +581,15 @@ object TmdbPoster {
 
     private suspend fun requestShared(key: String, fetch: suspend () -> String?): String? {
         val deferred = synchronized(inflight) {
-            inflight.getOrPut(key) { scope.async { fetch() } }
+            inflight.getOrPut(key) { scope.async { runCatching { fetch() }.getOrNull() } }
         }
         return try {
             deferred.await()
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // TMDB 仅为增强信息，任何异常（含 Error）都只降级为空结果，
+            // 绝不能让异常逃逸到调用方协程，否则未捕获异常会直接结束进程并重启到首页
             AppLog.e("TmdbPoster", e)
             null
         } finally {
