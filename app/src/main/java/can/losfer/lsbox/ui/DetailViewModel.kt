@@ -21,6 +21,7 @@ import can.losfer.lsbox.sourcedata.SourceViewModel
 import can.losfer.lsbox.util.AppContextHolder
 import can.losfer.lsbox.api.TmdbApi
 import can.losfer.lsbox.api.TmdbPoster
+import can.losfer.lsbox.api.TmdbTitleFilter
 import can.losfer.lsbox.bean.TmdbDetail
 import can.losfer.lsbox.bean.TmdbEpisode
 import can.losfer.lsbox.bean.TmdbPerson
@@ -126,7 +127,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         TmdbApi.parseSeasonHint(name) ?: TmdbApi.parseSeasonHint(flag)
 
     fun ensureTmdbDetail(name: String?, altName: String?, year: Int) {
-        if (name.isNullOrBlank()) {
+        if (TmdbTitleFilter.shouldSkipTmdb(name, altName)) {
             _tmdbDetail.value = null
             tmdbDetailKey = null
             return
@@ -139,14 +140,15 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         _tmdbDetail.value = cached
         if (cached == null) {
             viewModelScope.launch {
-                val resolved = TmdbPoster.resolveDetail(name, year, altName)
+                // TMDB 属于可选增强，任何异常都只能降级，绝不能抛出到主线程
+                val resolved = runCatching { TmdbPoster.resolveDetail(name, year, altName) }.getOrNull()
                 if (tmdbDetailKey == key) _tmdbDetail.value = resolved
             }
         }
     }
 
     fun ensureTmdbLogo(title: String?, altTitle: String?, year: Int) {
-        if (title.isNullOrBlank()) {
+        if (TmdbTitleFilter.shouldSkipTmdb(title, altTitle)) {
             _tmdbLogoPath.value = null
             tmdbLogoKey = null
             return
@@ -159,7 +161,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         _tmdbLogoPath.value = cached
         if (cached == null) {
             viewModelScope.launch {
-                val resolved = TmdbPoster.resolveLogo(title, year, altTitle)
+                val resolved = runCatching { TmdbPoster.resolveLogo(title, year, altTitle) }.getOrNull()
                 if (tmdbLogoKey == key) _tmdbLogoPath.value = resolved
             }
         }
@@ -173,7 +175,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         seasonHint: Int?,
         sourceOrder: List<Int>,
     ) {
-        if (name.isNullOrBlank() || episodeCount <= 0) {
+        if (TmdbTitleFilter.shouldSkipTmdb(name, altName) || episodeCount <= 0) {
             _tmdbEpisodeMeta.value = null
             tmdbEpisodeMetaKey = null
             return
@@ -186,9 +188,11 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         _tmdbEpisodeMeta.value = cached
         if (cached == null) {
             viewModelScope.launch {
-                val resolved = TmdbPoster.resolveEpisodeMeta(
-                    name, year, episodeCount, seasonHint, sourceOrder, altName,
-                )
+                val resolved = runCatching {
+                    TmdbPoster.resolveEpisodeMeta(
+                        name, year, episodeCount, seasonHint, sourceOrder, altName,
+                    )
+                }.getOrNull()
                 if (tmdbEpisodeMetaKey == key) _tmdbEpisodeMeta.value = resolved
             }
         }
@@ -218,7 +222,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         cached: (String, Int, String?) -> List<String>?,
         resolve: suspend (String, Int, String?) -> List<String>,
     ) {
-        if (title.isNullOrBlank()) {
+        if (title == null || TmdbTitleFilter.shouldSkipTmdb(title, altTitle)) {
             target.value = null
             return
         }
@@ -228,7 +232,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         target.value = TmdbImagesState(key, cachedPaths)
         if (cachedPaths == null) {
             viewModelScope.launch {
-                val resolved = resolve(title, year, altTitle)
+                val resolved = runCatching { resolve(title, year, altTitle) }.getOrDefault(emptyList())
                 if (target.value?.key == key) target.value = TmdbImagesState(key, resolved)
             }
         }
@@ -246,7 +250,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         _tmdbPerson.value = TmdbPersonState(id, epoch, cached, cached == null)
         if (cached == null) {
             viewModelScope.launch {
-                val resolved = TmdbPoster.resolvePerson(id)
+                val resolved = runCatching { TmdbPoster.resolvePerson(id) }.getOrNull()
                 val current = _tmdbPerson.value
                 if (current?.id == id && current.epoch == epoch) {
                     _tmdbPerson.value = TmdbPersonState(id, epoch, resolved, false)
@@ -263,7 +267,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
 
     fun ensureTmdbPosterPath(title: String?, altTitle: String?, year: Int) {
         val key = listOf(title, altTitle, year, TmdbImages.configEpoch.value)
-        if (title.isNullOrBlank() || !TmdbImages.isActive()) {
+        if (TmdbTitleFilter.shouldSkipTmdb(title, altTitle) || !TmdbImages.isActive()) {
             _tmdbPosterPath.value = TmdbPosterPathState(key, "")
             return
         }
@@ -272,7 +276,7 @@ class DetailViewModel : ViewModel(), TmdbPosterCache {
         _tmdbPosterPath.value = TmdbPosterPathState(key, cached)
         if (cached.isEmpty()) {
             viewModelScope.launch {
-                val resolved = TmdbPoster.resolvePoster(title, year, altTitle) ?: ""
+                val resolved = runCatching { TmdbPoster.resolvePoster(title, year, altTitle) }.getOrNull() ?: ""
                 if (_tmdbPosterPath.value?.key == key) {
                     _tmdbPosterPath.value = TmdbPosterPathState(key, resolved)
                 }
