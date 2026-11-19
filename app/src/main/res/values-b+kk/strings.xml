@@ -682,6 +682,12 @@
     <string name="ls_dl_send_queued">Жүктеу кезегіне қосылды</string>
     <string name="ls_dl_send_duplicate">Бұл сілтеме кезекте бар</string>
     <string name="ls_dl_send_failed">Қосу сәтсіз: %1$s</string>
+    <string name="ls_dl_pick_title">Жүктейтін бөлімді таңдаңыз</string>
+    <string name="ls_dl_pick_count">%1$d / %2$d бөлім таңдалды</string>
+    <string name="ls_dl_pick_confirm">Жүктеуді бастау</string>
+    <string name="ls_dl_pick_submitting">Жіберілуде…</string>
+    <string name="ls_dl_batch_result">%1$d тапсырма қосылды, %2$d бұрыннан бар</string>
+    <string name="ls_dl_batch_result_with_failure">%1$d қосылды, %2$d бұрыннан бар, %3$d сәтсіз: %4$s</string>
     <string name="ls_dl_need_config">Алдымен реттеулерде LS жүктеушісін баптаңыз</string>
     <string name="detail_download">Жүктеу</string>
     <string name="ls_dl_saved">Баптау сақталды</string>
