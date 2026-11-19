@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
@@ -64,6 +65,12 @@ import can.losfer.lsbox.util.TmdbImages
 import kotlinx.coroutines.launch
 
 private val EpisodeThumbWidth = 210.dp
+
+/** 纯标题选集卡片：最小宽度（短标题如「1」「12」也不会过窄）。 */
+private val EpisodeNameCardMinWidth = 56.dp
+
+/** 纯标题选集卡片：最大宽度（长标题换行而不撑满整屏）。 */
+private val EpisodeNameCardMaxWidth = 160.dp
 
 private const val EpisodeSheetHeightFraction = 0.6f
 
@@ -129,6 +136,7 @@ internal fun EpisodeRow(
             episodeNumbers,
             info.reverseSort,
         )
+        // TMDB 可用时以「截图 + 集数」样式展示选集，否则退回纯标题卡片
         val thumbnails = !episodeMeta.isNullOrEmpty()
         LaunchedEffect(playIndex, currentFlag, episodes.size, info.reverseSort) {
             if (episodes.isEmpty()) return@LaunchedEffect
@@ -159,7 +167,6 @@ internal fun EpisodeRow(
                         name = ep.name ?: (index + 1).toString(),
                         selected = index == playIndex,
                         onClick = { vm.onEpisodeClick(index) },
-                        modifier = Modifier.fillParentMaxWidth(),
                     )
                 }
             }
@@ -266,7 +273,9 @@ private fun EpisodeNameCard(
 ) {
     val shape = RoundedCornerShape(16.dp)
     Box(
+        // 按标题长度自适应宽度：短标题不被撑宽，长标题有上限，避免整行只看得到两三个
         modifier = modifier
+            .widthIn(min = EpisodeNameCardMinWidth, max = EpisodeNameCardMaxWidth)
             .detailGlass(shape)
             .then(
                 if (selected) {
@@ -288,8 +297,9 @@ private fun EpisodeNameCard(
             } else {
                 MaterialTheme.colorScheme.onSurface
             },
-            maxLines = Int.MAX_VALUE,
+            maxLines = 2,
             softWrap = true,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
         )
     }
